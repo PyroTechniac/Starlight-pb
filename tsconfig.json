@@ -1,0 +1,15 @@
+{
+	"extends": "eslint-config-bamboo",
+	"compilerOptions": {
+		"outDir": "./dist",
+		"noImplicitAny": true,
+		"target": "es2019",
+		"types": [
+			"node"
+		],
+		"removeComments": true
+	},
+	"include": [
+		"src"
+	]
+}

@@ -4,8 +4,11 @@ package-lock.json
 out/
 coverage/
 .nyc_output/
+.env
 dist/
 docs/
 test-results.xml
+config.json
 
 docs.json
+!.env.example

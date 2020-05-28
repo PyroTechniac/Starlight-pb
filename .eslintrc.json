@@ -1,0 +1,17 @@
+{
+	"extends": "bamboo",
+	"rules": {
+		"no-throw-literal": "off",
+		"@typescript-eslint/explicit-function-return-type": [
+			"error"
+		],
+		"@typescript-eslint/quotes": [
+			"error",
+			"single"
+		],
+		"@typescript-eslint/no-unnecessary-type-assertion": 2,
+		"@typescript-eslint/explicit-member-accessibility": [
+			"error"
+		]
+	}
+}
