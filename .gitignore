@@ -12,3 +12,5 @@ config.json
 
 docs.json
 !.env.example
+
+test.js
