@@ -1,24 +1,22 @@
 import { StarlightClient } from './lib/client/StarlightClient';
 import { config } from 'dotenv';
+import { SchemaManager } from './lib/structures/SchemaManager';
 
 config();
+
+StarlightClient.use(SchemaManager);
 
 const client = new StarlightClient({
 	commands: {
 		prefix: 's.',
 		logging: true,
-		editing: true,
-		messageLifetime: 60000
+		editing: true
 	},
 	rest: {
 		offset: 0
 	},
 	consoleEvents: {
 		debug: true
-	},
-	cache: {
-		messageLifetime: 30000,
-		messageSweepInterval: 60000
 	}
 });
 

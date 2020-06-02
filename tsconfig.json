@@ -7,7 +7,9 @@
 		"removeComments": true,
 		"declaration": true,
 		"experimentalDecorators": true,
-		"emitDecoratorMetadata": true
+		"emitDecoratorMetadata": true,
+		"incremental": true,
+		"listEmittedFiles": true
 	},
 	"include": [
 		"src"
