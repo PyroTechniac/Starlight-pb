@@ -3,7 +3,9 @@ import { mergeOptions } from '../lib/util/decorators';
 
 @mergeOptions<EventOptions>({ once: true })
 export default class extends Event {
+
 	public run(): void {
-		// this.client.schemas.initAll();
+		this.client.schemas.initAll();
 	}
+
 }

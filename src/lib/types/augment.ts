@@ -1,5 +1,5 @@
 import type { AssetStore } from '../structures/AssetStore';
-import type {SchemaManager} from '../structures/SchemaManager';
+import type { SchemaManager } from '../structures/SchemaManager';
 
 declare module '@klasa/core/dist/src/lib/client/Client' {
 	export interface Client {
@@ -10,6 +10,6 @@ declare module '@klasa/core/dist/src/lib/client/Client' {
 
 declare module 'klasa/dist/src/lib/structures/Provider' {
 	export interface Provider {
-		readonly shouldUnload: boolean;
+		readonly shouldUnload: boolean; // eslint-disable-line @typescript-eslint/naming-convention
 	}
 }

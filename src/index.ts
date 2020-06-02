@@ -8,7 +8,7 @@ StarlightClient.use(SchemaManager);
 
 const client = new StarlightClient({
 	commands: {
-		prefix: 's.',
+		prefix: process.env.PREFIX ?? '!',
 		logging: true,
 		editing: true
 	},

@@ -1,11 +1,12 @@
-import { Provider, ProviderStore } from "klasa";
-import { PieceOptions, ClientEvents } from "@klasa/core";
-import { resolve, dirname } from "path";
+import { Provider, ProviderStore } from 'klasa';
+import { PieceOptions, ClientEvents } from '@klasa/core';
+import { resolve, dirname } from 'path';
 import { mergeDefault, chunk as chunkFn, mergeObjects } from '@klasa/utils';
 import { promises as fsp } from 'fs';
 import * as fsn from 'fs-nextra';
 
 export abstract class FileSystemProvider extends Provider {
+
 	public baseDirectory: string;
 
 	public constructor(store: ProviderStore, directory: string, files: readonly string[], options: PieceOptions = {}) {
@@ -34,7 +35,7 @@ export abstract class FileSystemProvider extends Provider {
 		return fsn.mkdirs(this.resolve(table));
 	}
 
-	public async deleteTable(table: string): Promise<void | null> {
+	public async deleteTable(table: string): Promise<void | null> { // eslint-disable-line @typescript-eslint/no-invalid-void-type
 		const exists = await this.hasTable(table);
 		const resolvedTable = this.resolve(table);
 		return exists ? fsn.emptyDir(resolvedTable).then((): Promise<void> => fsn.remove(resolvedTable)) : null;
@@ -59,17 +60,17 @@ export abstract class FileSystemProvider extends Provider {
 		}
 	}
 
-	public create(table: string, id: string, data: object = {}): Promise<unknown> {
+	public create(table: string, id: string, data: object = {}): Promise<unknown> { // eslint-disable-line @typescript-eslint/ban-types
 		return this.write(this.resolve(table, id), { id, ...this.parseUpdateInput(data) });
 	}
 
-	public async update(table: string, id: string, data: object): Promise<unknown> {
+	public async update(table: string, id: string, data: object): Promise<unknown> { // eslint-disable-line @typescript-eslint/ban-types
 		const existent = await this.get(table, id) as Record<PropertyKey, unknown> | null;
 		const parsedData = this.parseUpdateInput(data);
 		return this.write(this.resolve(table, id), mergeObjects(existent ?? { id }, parsedData));
 	}
 
-	public replace(table: string, id: string, data: object): Promise<unknown> {
+	public replace(table: string, id: string, data: object): Promise<unknown> { // eslint-disable-line @typescript-eslint/ban-types
 		return this.write(this.resolve(table, id), { id, ...this.parseUpdateInput(data) });
 	}
 
@@ -100,9 +101,10 @@ export abstract class FileSystemProvider extends Provider {
 
 	public abstract read(file: string): Promise<unknown>;
 
-	public abstract write(file: string, data: object): Promise<unknown>;
+	public abstract write(file: string, data: object): Promise<unknown>; // eslint-disable-line @typescript-eslint/ban-types
 
 	protected resolve(table: string, id?: string): string {
 		return id ? resolve(this.baseDirectory, table, `${id}.${this.extension}`) : resolve(this.baseDirectory, table);
 	}
+
 }

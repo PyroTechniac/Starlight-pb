@@ -1,10 +1,13 @@
 import { Cache } from '@klasa/cache';
 import { KlasaClient, Schema, SchemaEntry, SettingsFolder } from 'klasa';
-import { Guild, Client, Plugin } from '@klasa/core';
+import { Guild, Client } from '@klasa/core';
 import { toTitleCase } from '@klasa/utils';
 
-export class SchemaManager implements Plugin {
-	#configurable: Cache<string, Schema | SchemaEntry> = new Cache();
+import type { StarlightPlugin } from '../client/StarlightPlugin';
+
+export class SchemaManager implements StarlightPlugin {
+
+	#configurable: Cache<string, Schema | SchemaEntry> = new Cache(); // eslint-disable-line @typescript-eslint/explicit-member-accessibility
 
 	public constructor(public readonly client: KlasaClient) { }
 
@@ -16,6 +19,18 @@ export class SchemaManager implements Plugin {
 
 	public get(prefix: string, path: string): Schema | SchemaEntry | undefined {
 		return this.#configurable.get(`${prefix}/${path}`);
+	}
+
+	public *values(): IterableIterator<SchemaEntry | Schema> {
+		yield *this.#configurable.values();
+	}
+
+	public *entries(): IterableIterator<[string, SchemaEntry | Schema]> {
+		yield *this.#configurable.entries();
+	}
+
+	public *keys(): IterableIterator<string> {
+		yield *this.#configurable.keys();
 	}
 
 	public displayFolder(prefix: string, settings: SettingsFolder): string {
@@ -49,6 +64,10 @@ export class SchemaManager implements Plugin {
 		}
 
 		return array.join('\n');
+	}
+
+	public *[Symbol.iterator](): IterableIterator<[string, SchemaEntry | Schema]> {
+		yield *this.#configurable;
 	}
 
 	public displayEntry(entry: SchemaEntry, value: unknown, guild: Guild | null = null): string {
@@ -88,4 +107,5 @@ export class SchemaManager implements Plugin {
 	public static [Client.plugin](this: Client): void {
 		this.schemas = new SchemaManager(this as KlasaClient);
 	}
+
 }

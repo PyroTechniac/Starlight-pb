@@ -27,6 +27,7 @@ interface NonAbstractTask extends Task {
 
 export function ensureTask(time: string | number | Date, data?: ScheduledTaskOptions): Function {
 	return createClassDecorator((target: PieceConstructor<NonAbstractTask>): PieceConstructor<NonAbstractTask> => class extends target {
+
 		private get scheduled(): ScheduledTask | undefined {
 			return this.client.schedule.tasks.find((st): boolean => st.taskName === this.name && st.task === this);
 		}
@@ -42,14 +43,17 @@ export function ensureTask(time: string | number | Date, data?: ScheduledTaskOpt
 				this.client.emit(StarlightEvents.TaskFound, found);
 			}
 		}
-	})
+
+	});
 }
 
 // Not a Decorator, but a function that returns a class, so it's close enough.
-export function Extendable(...appliesTo: any[]): Constructor<KlasaExtendable> {
+export function Extendable(...appliesTo: any[]): Constructor<KlasaExtendable> { // eslint-disable-line @typescript-eslint/naming-convention
 	return class extends KlasaExtendable {
+
 		public constructor(store: ExtendableStore, directory: string, files: readonly string[], options: ExtendableOptions = {}) {
 			super(store, directory, files, { ...options, appliesTo });
 		}
+
 	} as unknown as Constructor<KlasaExtendable>;
 }

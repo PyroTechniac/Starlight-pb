@@ -12,6 +12,7 @@
 		"@typescript-eslint/no-unnecessary-type-assertion": 2,
 		"@typescript-eslint/explicit-member-accessibility": [
 			"error"
-		]
+		],
+		"@typescript-eslint/no-throw-literal": 0
 	}
 }
