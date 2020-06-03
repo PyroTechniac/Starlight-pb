@@ -1,23 +1,21 @@
 import { Command, CommandOptions, SchemaEntry, SettingsFolder } from 'klasa';
-import { mergeOptions, requiresPermission } from '../../lib/util/decorators';
-import { ChannelType } from '@klasa/dapi-types';
+import { mergeOptions } from '../../../lib/util/decorators';
 import { toTitleCase, codeBlock } from '@klasa/utils';
-import { Message } from '@klasa/core';
+
+import type { Message } from '@klasa/core';
 
 @mergeOptions<CommandOptions>({
-	runIn: [ChannelType.GuildText],
 	guarded: true,
 	subcommands: true,
-	description: (lang): string => lang.get('COMMAND_CONF_SERVER_DESCRIPTION'),
+	description: (lang): string => lang.get('COMMAND_CONF_USER_DESCRIPTION'),
 	usage: '<set|remove|reset|show:default> (key:key) (value:value)',
 	usageDelim: ' '
 })
 export default class extends Command {
-
 	public init(): void {
 		this
 			.createCustomResolver('key', (arg, _possible, message, [action]): any => {
-				if (action === 'show' || arg) return arg || ''; // eslint-disable-line @typescript-eslint/no-unsafe-return
+				if (action === 'show' || arg) return arg || '';
 				throw message.language.get('COMMAND_CONF_NOKEY');
 			})
 			.createCustomResolver('value', (arg, possible, message, [action]): any => {
@@ -27,19 +25,18 @@ export default class extends Command {
 			});
 	}
 
-	@requiresPermission(6)
 	public show(message: Message, [key]: [string]): Promise<Message[]> {
-		const schemaOrEntry = this.client.schemas.get('guilds', key);
+		const schemaOrEntry = this.client.schemas.get('users', key);
 		if (typeof schemaOrEntry === 'undefined') throw message.language.get('COMMAND_CONF_GET_NOEXT', key);
 
-		const value = key ? message.guild!.settings.get(key) : message.guild!.settings;
+		const value = key ? message.author.settings.get(key) : message.author.settings;
 		if (SchemaEntry.is(schemaOrEntry)) {
 			return message.sendLocale('COMMAND_CONF_GET', [key, this.client.schemas.displayEntry(schemaOrEntry, value, message.guild)]);
 		}
 
 		return message.sendLocale('COMMAND_CONF_SERVER', [
 			key ? `: ${key.split('.').map(toTitleCase).join('/')}` : '',
-			codeBlock('asciidoc', this.client.schemas.displayFolder('guilds', value as SettingsFolder))
+			codeBlock('asciidoc', this.client.schemas.displayFolder('users', value as SettingsFolder))
 		]);
 	}
 
@@ -51,24 +48,21 @@ export default class extends Command {
 		return this.editSettings(message, key, valueToRemove, 'remove');
 	}
 
-	@requiresPermission(6)
 	public async reset(message: Message, [key]: [string]): Promise<Message[]> {
 		try {
-			const [update] = await message.guild!.settings.reset(key);
+			const [update] = await message.author.settings.reset(key);
 			return message.sendLocale('COMMAND_CONF_RESET', [key, this.client.schemas.displayEntry(update.entry, update.next, message.guild)]);
 		} catch (error) {
 			throw String(error);
 		}
 	}
 
-	@requiresPermission(6)
 	private async editSettings(message: Message, key: string, value: unknown, arrayAction: 'add' | 'remove'): Promise<Message[]> {
 		try {
-			const [update] = await message.guild!.settings.update(key, value, { onlyConfigurable: true, arrayAction });
+			const [update] = await message.author.settings.update(key, value, { onlyConfigurable: true, arrayAction });
 			return message.sendLocale('COMMAND_CONF_UPDATED', [key, this.client.schemas.displayEntry(update.entry, update.next, message.guild)]);
 		} catch (error) {
 			throw String(error);
 		}
 	}
-
 }

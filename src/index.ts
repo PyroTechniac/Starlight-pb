@@ -17,6 +17,9 @@ const client = new StarlightClient({
 	},
 	consoleEvents: {
 		debug: true
+	},
+	providers: {
+		default: process.env.PROVIDER ?? 'json'
 	}
 });
 

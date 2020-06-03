@@ -1,10 +1,15 @@
 import { ScheduledTask, ScheduledTaskOptions, Task, Extendable as KlasaExtendable, ExtendableStore, ExtendableOptions } from 'klasa';
 import { StarlightEvents } from '../types/enums';
+import { isFunction } from '@klasa/utils';
 
-import type { Piece, PieceConstructor, PieceOptions, Store, Constructor } from '@klasa/core';
+import type { Piece, PieceConstructor, PieceOptions, Store, Constructor, Message } from '@klasa/core';
 /* eslint-disable @typescript-eslint/ban-types */
 
 export function createClassDecorator(fn: Function): Function {
+	return fn;
+}
+
+export function createMethodDecorator(fn: MethodDecorator): MethodDecorator {
 	return fn;
 }
 
@@ -47,6 +52,31 @@ export function ensureTask(time: string | number | Date, data?: ScheduledTaskOpt
 	});
 }
 
+export function createFunctionInhibitor(inhibitor: Inhibitor, fallback: Fallback = (): undefined => undefined): MethodDecorator {
+	return createMethodDecorator((_target, _propertyKey, descriptor): void => {
+		const method = descriptor.value;
+		if (!method) throw new Error('Function inhibitors require a [[value]].');
+		if (!isFunction(method)) throw new Error('Function inhibitors can only be applied to functions.');
+
+		descriptor.value = (async function descriptorValue(this: Function, ...args: any[]): Promise<any[]> {
+			const canRun = await inhibitor(...args);
+			return canRun ? method.call(this, ...args) : fallback.call(this, ...args);
+		}) as unknown as undefined;
+	});
+}
+
+export function requiresPermission(value: number, fallback: Fallback = (message: Message): never => { throw message.language.get('INHIBITOR_PERMISSIONS') }): MethodDecorator {
+	return createFunctionInhibitor((message: Message): Promise<boolean> => message.hasAtLeastPermissionLevel(value), fallback);
+}
+
+export function requiresGuildContext(fallback: Fallback = (): undefined => undefined): MethodDecorator {
+	return createFunctionInhibitor((message: Message): boolean => message.guild !== null, fallback);
+}
+
+export function requiresDMContext(fallback: Fallback = (): undefined => undefined): MethodDecorator {
+	return createFunctionInhibitor((message: Message): boolean => message.guild === null, fallback);
+}
+
 // Not a Decorator, but a function that returns a class, so it's close enough.
 export function Extendable(...appliesTo: any[]): Constructor<KlasaExtendable> { // eslint-disable-line @typescript-eslint/naming-convention
 	return class extends KlasaExtendable {
@@ -56,4 +86,12 @@ export function Extendable(...appliesTo: any[]): Constructor<KlasaExtendable> { 
 		}
 
 	} as unknown as Constructor<KlasaExtendable>;
+}
+
+export interface Inhibitor {
+	(...args: any[]): boolean | Promise<boolean>;
+}
+
+export interface Fallback {
+	(...args: any[]): unknown;
 }

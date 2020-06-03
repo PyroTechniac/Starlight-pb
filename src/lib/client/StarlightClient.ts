@@ -1,5 +1,6 @@
 import { KlasaClient } from 'klasa';
 import { AssetStore } from '../structures/AssetStore';
+import '../schemas/Guilds';
 
 import type { Client, Plugin } from '@klasa/core';
 import type { StarlightPlugin } from './StarlightPlugin';

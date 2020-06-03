@@ -58,6 +58,10 @@ export abstract class Asset extends Piece implements FileResolvable {
 		};
 	}
 
+	public static get basePath(): string {
+		return this.makePath();
+	}
+
 	protected static makePath(...paths: readonly string[]): string {
 		return join(rootFolder, 'assets', ...paths);
 	}
