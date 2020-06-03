@@ -60,12 +60,13 @@ export function createFunctionInhibitor(inhibitor: Inhibitor, fallback: Fallback
 
 		descriptor.value = (async function descriptorValue(this: Function, ...args: any[]): Promise<any[]> {
 			const canRun = await inhibitor(...args);
-			return canRun ? method.call(this, ...args) : fallback.call(this, ...args);
+			return canRun ? method.call(this, ...args) : fallback.call(this, ...args); // eslint-disable-line @typescript-eslint/no-unsafe-return
 		}) as unknown as undefined;
 	});
 }
 
-export function requiresPermission(value: number, fallback: Fallback = (message: Message): never => { throw message.language.get('INHIBITOR_PERMISSIONS') }): MethodDecorator {
+// eslint-disable-next-line max-statements-per-line
+export function requiresPermission(value: number, fallback: Fallback = (message: Message): never => { throw message.language.get('INHIBITOR_PERMISSIONS'); }): MethodDecorator {
 	return createFunctionInhibitor((message: Message): Promise<boolean> => message.hasAtLeastPermissionLevel(value), fallback);
 }
 

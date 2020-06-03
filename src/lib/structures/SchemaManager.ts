@@ -22,15 +22,15 @@ export class SchemaManager implements StarlightPlugin {
 	}
 
 	public *values(): IterableIterator<SchemaEntry | Schema> {
-		yield* this.#configurable.values();
+		yield *this.#configurable.values();
 	}
 
 	public *entries(): IterableIterator<[string, SchemaEntry | Schema]> {
-		yield* this.#configurable.entries();
+		yield *this.#configurable.entries();
 	}
 
 	public *keys(): IterableIterator<string> {
-		yield* this.#configurable.keys();
+		yield *this.#configurable.keys();
 	}
 
 	public displayFolder(prefix: string, settings: SettingsFolder): string {
@@ -67,7 +67,11 @@ export class SchemaManager implements StarlightPlugin {
 	}
 
 	public *[Symbol.iterator](): IterableIterator<[string, SchemaEntry | Schema]> {
-		yield* this.#configurable;
+		yield *this.#configurable;
+	}
+
+	public toJSON(): Record<string, SchemaEntryJson | SchemaJson> {
+		return Object.fromEntries([...this].map(([key, value]): [string, SchemaEntryJson | SchemaJson] => [key, value.toJSON()]));
 	}
 
 	public displayEntry(entry: SchemaEntry, value: unknown, guild: Guild | null = null): string {
@@ -102,10 +106,6 @@ export class SchemaManager implements StarlightPlugin {
 
 	private filteredKeys(prefix: string): Cache<string, Schema | SchemaEntry> {
 		return this.#configurable.filter((_, key): boolean => key.startsWith(prefix));
-	}
-
-	public toJSON(): Record<string, SchemaEntryJson | SchemaJson> {
-		return Object.fromEntries([...this].map(([key, value]): [string, SchemaEntryJson | SchemaJson] => [key, value.toJSON()]));
 	}
 
 	public static [Client.plugin](this: Client): void {

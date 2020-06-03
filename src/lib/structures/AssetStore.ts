@@ -24,7 +24,7 @@ export class AssetStore extends Store<Asset> {
 			filter: (dirent, path): boolean => dirent.isFile() && ['.webp', '.png', '.jpg', '.gif'].includes(extname(path))
 		})
 			.then((f): string[] => [...f.keys()].filter((path): boolean => !filepaths.includes(path)))
-			.catch(() => ensureDir(basePath).catch((err): void => { this.client.emit(ClientEvents.Error, err) }));
+			.catch(() => ensureDir(basePath).catch((err): void => { this.client.emit(ClientEvents.Error, err); }));
 
 		if (!files) return super.init();
 

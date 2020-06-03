@@ -19,7 +19,7 @@ const client = new StarlightClient({
 		debug: true
 	},
 	providers: {
-		default: process.env.PROVIDER ?? 'json'
+		'default': process.env.PROVIDER ?? 'json'
 	}
 });
 

@@ -4,6 +4,8 @@ import { ChannelType } from '@klasa/dapi-types';
 import { toTitleCase, codeBlock } from '@klasa/utils';
 import { Message } from '@klasa/core';
 
+import type {ConfCommand} from '../../lib/types/interfaces';
+
 @mergeOptions<CommandOptions>({
 	runIn: [ChannelType.GuildText],
 	guarded: true,
@@ -12,7 +14,7 @@ import { Message } from '@klasa/core';
 	usage: '<set|remove|reset|show:default> (key:key) (value:value)',
 	usageDelim: ' '
 })
-export default class extends Command {
+export default class extends Command implements ConfCommand {
 
 	public init(): void {
 		this

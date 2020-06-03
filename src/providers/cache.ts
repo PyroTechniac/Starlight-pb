@@ -15,7 +15,8 @@ const enum ErrorMessages {
 }
 
 export default class extends Provider {
-	#tables: Map<string, Map<string, object>> = new Map();
+
+	#tables: Map<string, Map<string, object>> = new Map(); // eslint-disable-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-unsafe-assignment
 
 	public create(table: string, entry: string, data: ReadonlyKeyedObject): Promise<void> {
 		const resolvedTable = this.#tables.get(table);

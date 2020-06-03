@@ -2,7 +2,7 @@ import { KlasaClient } from 'klasa';
 import { AssetStore } from '../structures/AssetStore';
 import '../schemas/Guilds';
 
-import type { Client, Plugin } from '@klasa/core';
+import type { Plugin } from '@klasa/core';
 import type { StarlightPlugin } from './StarlightPlugin';
 
 export class StarlightClient extends KlasaClient {
@@ -14,8 +14,9 @@ export class StarlightClient extends KlasaClient {
 		return super.connect();
 	}
 
-	public static use(mod: StarlightPlugin): typeof Client {
-		return super.use(mod as unknown as typeof Plugin);
+	public static use(mod: StarlightPlugin): typeof StarlightClient {
+		super.use(mod as unknown as typeof Plugin);
+		return StarlightClient;
 	}
 
 }

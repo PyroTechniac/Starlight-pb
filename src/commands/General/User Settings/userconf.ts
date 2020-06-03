@@ -3,6 +3,7 @@ import { mergeOptions } from '../../../lib/util/decorators';
 import { toTitleCase, codeBlock } from '@klasa/utils';
 
 import type { Message } from '@klasa/core';
+import type { ConfCommand } from '../../../lib/types/interfaces';
 
 @mergeOptions<CommandOptions>({
 	guarded: true,
@@ -11,11 +12,12 @@ import type { Message } from '@klasa/core';
 	usage: '<set|remove|reset|show:default> (key:key) (value:value)',
 	usageDelim: ' '
 })
-export default class extends Command {
+export default class extends Command implements ConfCommand {
+
 	public init(): void {
 		this
 			.createCustomResolver('key', (arg, _possible, message, [action]): any => {
-				if (action === 'show' || arg) return arg || '';
+				if (action === 'show' || arg) return arg || ''; // eslint-disable-line @typescript-eslint/no-unsafe-return
 				throw message.language.get('COMMAND_CONF_NOKEY');
 			})
 			.createCustomResolver('value', (arg, possible, message, [action]): any => {
@@ -65,4 +67,5 @@ export default class extends Command {
 			throw String(error);
 		}
 	}
+
 }
