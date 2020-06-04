@@ -1,4 +1,6 @@
 export const enum StarlightEvents {
 	TaskFound = 'taskFound',
-	TaskCreated = 'taskCreated'
+	TaskCreated = 'taskCreated',
+	Log = 'log',
+	Warn = 'warn'
 }

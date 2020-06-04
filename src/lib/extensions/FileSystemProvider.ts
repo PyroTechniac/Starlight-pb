@@ -1,9 +1,9 @@
-import { Provider, ProviderStore } from 'klasa';
-import { PieceOptions, ClientEvents } from '@klasa/core';
-import { resolve, dirname } from 'path';
-import { mergeDefault, chunk as chunkFn, mergeObjects } from '@klasa/utils';
+import { ClientEvents, PieceOptions } from '@klasa/core';
+import { chunk as chunkFn, mergeDefault, mergeObjects } from '@klasa/utils';
 import { promises as fsp } from 'fs';
 import * as fsn from 'fs-nextra';
+import { Provider, ProviderStore } from 'klasa';
+import { dirname, resolve } from 'path';
 
 export abstract class FileSystemProvider extends Provider {
 

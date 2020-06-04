@@ -1,4 +1,4 @@
-import { Plugin, Client } from '@klasa/core';
+import { Client, Plugin } from '@klasa/core';
 
 export abstract class StarlightPlugin extends Plugin {
 

@@ -1,8 +1,7 @@
-import { ScheduledTask, ScheduledTaskOptions, Task, Extendable as KlasaExtendable, ExtendableStore, ExtendableOptions } from 'klasa';
-import { StarlightEvents } from '../types/enums';
+import type { Constructor, Message, Piece, PieceConstructor, PieceOptions, Store } from '@klasa/core';
 import { isFunction } from '@klasa/utils';
-
-import type { Piece, PieceConstructor, PieceOptions, Store, Constructor, Message } from '@klasa/core';
+import { Extendable as KlasaExtendable, ExtendableOptions, ExtendableStore, ScheduledTask, ScheduledTaskOptions, Task } from 'klasa';
+import { StarlightEvents } from '../types/enums';
 /* eslint-disable @typescript-eslint/ban-types */
 
 export function createClassDecorator(fn: Function): Function {

@@ -1,9 +1,8 @@
-import { Command, CommandOptions, SchemaEntry, SettingsFolder } from 'klasa';
-import { mergeOptions } from '../../../lib/util/decorators';
-import { toTitleCase, codeBlock } from '@klasa/utils';
-
 import type { Message } from '@klasa/core';
+import { codeBlock, toTitleCase } from '@klasa/utils';
+import { Command, CommandOptions, SchemaEntry, SettingsFolder } from 'klasa';
 import type { ConfCommand } from '../../../lib/types/interfaces';
+import { mergeOptions } from '../../../lib/util/decorators';
 
 @mergeOptions<CommandOptions>({
 	guarded: true,

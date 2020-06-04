@@ -1,8 +1,6 @@
+import type { Plugin } from '@klasa/core';
 import { KlasaClient } from 'klasa';
 import { AssetStore } from '../structures/AssetStore';
-import '../schemas/Guilds';
-
-import type { Plugin } from '@klasa/core';
 import type { StarlightPlugin } from './StarlightPlugin';
 
 export class StarlightClient extends KlasaClient {

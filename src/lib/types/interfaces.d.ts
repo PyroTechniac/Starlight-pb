@@ -1,6 +1,6 @@
+import type { Message } from '@klasa/core';
 import type { File } from '@klasa/rest';
 import type { Command, Possible } from 'klasa';
-import type { Message } from '@klasa/core';
 
 export interface FileResolvable {
 	resolve(): Promise<File>;

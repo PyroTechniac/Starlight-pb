@@ -1,10 +1,13 @@
 import { StarlightClient } from './lib/client/StarlightClient';
 import { config } from 'dotenv';
+import { Intents } from '@klasa/ws';
 import { SchemaManager } from './lib/structures/SchemaManager';
+import { WorkerCache } from './lib/workers/WorkerCache';
 
 config();
 
-StarlightClient.use(SchemaManager);
+StarlightClient.use(SchemaManager)
+	.use(WorkerCache);
 
 const client = new StarlightClient({
 	commands: {
@@ -14,6 +17,9 @@ const client = new StarlightClient({
 	},
 	rest: {
 		offset: 0
+	},
+	ws: {
+		intents: Intents.ALL
 	},
 	consoleEvents: {
 		debug: true

@@ -1,10 +1,9 @@
-import { Command, CommandOptions, SchemaEntry, SettingsFolder } from 'klasa';
-import { mergeOptions, requiresPermission } from '../../lib/util/decorators';
-import { ChannelType } from '@klasa/dapi-types';
-import { toTitleCase, codeBlock } from '@klasa/utils';
 import { Message } from '@klasa/core';
-
-import type {ConfCommand} from '../../lib/types/interfaces';
+import { ChannelType } from '@klasa/dapi-types';
+import { codeBlock, toTitleCase } from '@klasa/utils';
+import { Command, CommandOptions, SchemaEntry, SettingsFolder } from 'klasa';
+import type { ConfCommand } from '../../lib/types/interfaces';
+import { mergeOptions, requiresPermission } from '../../lib/util/decorators';
 
 @mergeOptions<CommandOptions>({
 	runIn: [ChannelType.GuildText],

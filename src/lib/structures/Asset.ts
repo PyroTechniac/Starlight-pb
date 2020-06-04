@@ -1,14 +1,13 @@
-import { Piece, PieceOptions, Attachment } from '@klasa/core';
-import { promises as fsp } from 'fs';
-import { noop } from '../util/utils';
-import { join } from 'path';
-import { rootFolder } from '../util/constants';
-import { mergeDefault } from '@klasa/utils';
-import readFile = fsp.readFile;
-
-import type { AssetStore } from './AssetStore';
+import { Attachment, Piece, PieceOptions } from '@klasa/core';
 import type { File } from '@klasa/rest';
+import { mergeDefault } from '@klasa/utils';
+import { promises as fsp } from 'fs';
+import { join } from 'path';
 import type { FileResolvable } from '../types/interfaces';
+import { rootFolder } from '../util/constants';
+import { noop } from '../util/utils';
+import type { AssetStore } from './AssetStore';
+import readFile = fsp.readFile;
 
 export abstract class Asset extends Piece implements FileResolvable {
 

@@ -1,8 +1,7 @@
 import { Cache } from '@klasa/cache';
-import { KlasaClient, Schema, SchemaEntry, SettingsFolder, SchemaEntryJson, SchemaJson } from 'klasa';
-import { Guild, Client } from '@klasa/core';
+import { Client, Guild } from '@klasa/core';
 import { toTitleCase } from '@klasa/utils';
-
+import { KlasaClient, Schema, SchemaEntry, SchemaEntryJson, SchemaJson, SettingsFolder } from 'klasa';
 import type { StarlightPlugin } from '../client/StarlightPlugin';
 
 export class SchemaManager implements StarlightPlugin {

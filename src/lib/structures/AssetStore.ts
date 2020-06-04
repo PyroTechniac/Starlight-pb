@@ -1,7 +1,8 @@
-import { Store, PieceConstructor, Client, ClientEvents } from '@klasa/core';
-import { Asset } from './Asset';
-import { scan, ensureDir } from 'fs-nextra';
+import { Client, ClientEvents, PieceConstructor, Store } from '@klasa/core';
+import { ensureDir, scan } from 'fs-nextra';
 import { extname } from 'path';
+import { Asset } from './Asset';
+import { StarlightEvents } from '../types/enums';
 
 export class AssetStore extends Store<Asset> {
 
@@ -29,7 +30,7 @@ export class AssetStore extends Store<Asset> {
 		if (!files) return super.init();
 
 		if (files.length) {
-			for (const file of files) this.client.emit(ClientEvents.Error, `No Asset found for ${file}.`);
+			for (const file of files) this.client.emit(StarlightEvents.Warn, `No Asset found for ${file}.`);
 		}
 
 		return super.init();

@@ -1,5 +1,5 @@
-import { Provider, ReadonlyKeyedObject, SettingsUpdateResults } from 'klasa';
 import { mergeObjects } from '@klasa/utils';
+import { Provider, ReadonlyKeyedObject, SettingsUpdateResults } from 'klasa';
 
 // This is a development provider for when file system access limited or unavailable to NodeJS
 // It is in NO WAY meant for production, as it increases cache tremendously.
