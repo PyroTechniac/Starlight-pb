@@ -6,8 +6,7 @@ import { WorkerCache } from './lib/workers/WorkerCache';
 
 config();
 
-StarlightClient.use(SchemaManager)
-	.use(WorkerCache);
+StarlightClient.use(SchemaManager);
 
 const client = new StarlightClient({
 	commands: {
