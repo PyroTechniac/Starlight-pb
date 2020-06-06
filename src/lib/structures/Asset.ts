@@ -3,13 +3,13 @@ import type { File } from '@klasa/rest';
 import { mergeDefault } from '@klasa/utils';
 import { promises as fsp } from 'fs';
 import { join } from 'path';
-import type { FileResolvable } from '../types/interfaces';
+import type { Resolvable } from '../types/interfaces';
 import { rootFolder } from '../util/constants';
 import { noop } from '../util/utils';
 import type { AssetStore } from './AssetStore';
 import readFile = fsp.readFile;
 
-export abstract class Asset extends Piece implements FileResolvable {
+export abstract class Asset extends Piece implements Resolvable<File> {
 
 	public filename: string;
 

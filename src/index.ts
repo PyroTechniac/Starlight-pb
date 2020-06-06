@@ -2,11 +2,12 @@ import { StarlightClient } from './lib/client/StarlightClient';
 import { config } from 'dotenv';
 import { Intents } from '@klasa/ws';
 import { SchemaManager } from './lib/structures/SchemaManager';
-import { WorkerCache } from './lib/workers/WorkerCache';
+import { DashboardHooks } from './lib/http/DashboardHooks';
 
 config();
 
-StarlightClient.use(SchemaManager);
+StarlightClient.use(SchemaManager)
+	.use(DashboardHooks);
 
 const client = new StarlightClient({
 	commands: {
@@ -25,6 +26,10 @@ const client = new StarlightClient({
 	},
 	providers: {
 		'default': process.env.PROVIDER ?? 'json'
+	},
+	hooks: {
+		clientID: process.env.CLIENT_ID,
+		clientSecret: process.env.CLIENT_SECRET
 	}
 });
 

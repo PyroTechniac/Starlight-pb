@@ -1,11 +1,10 @@
 import type { Message } from '@klasa/core';
-import type { File } from '@klasa/rest';
-import type { Command, Possible } from 'klasa';
+import type { ServerOptions } from 'http';
+import type { Command } from 'klasa';
 
-export interface FileResolvable {
-	resolve(): Promise<File>;
+export interface Resolvable<V> {
+	resolve(): V | Promise<V>;
 }
-
 // Don't include editSettings (even though every conf command has one) because it's an implementation detail
 export interface ConfCommand extends Command {
 	show(message: Message, [key]: [string]): Promise<Message[]>;
@@ -14,6 +13,21 @@ export interface ConfCommand extends Command {
 	reset(message: Message, [key]: [string]): Promise<Message[]>;
 }
 
-export interface CustomArgResolver {
-	(arg: any, possible: Possible, message: Message, args: any[]): any;
+export interface ParsedPart {
+	value: string;
+	type: number;
+}
+
+export interface DashboardHooksOptions {
+	apiPrefix?: string;
+	origin?: string;
+	port?: number;
+	clientSecret?: string;
+	clientID?: string;
+	serverOptions?: ServerOptions;
+}
+
+export interface AuthData {
+	token: string;
+	scope: string[];
 }
