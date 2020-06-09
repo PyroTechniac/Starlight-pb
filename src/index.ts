@@ -1,12 +1,12 @@
 import { StarlightClient } from './lib/client/StarlightClient';
 import { config } from 'dotenv';
 import { Intents } from '@klasa/ws';
-import { SchemaManager } from './lib/structures/SchemaManager';
+import { SchemaEngine } from './lib/structures/SchemaEngine';
 import { DashboardHooks } from './lib/http/DashboardHooks';
 
 config();
 
-StarlightClient.use(SchemaManager)
+StarlightClient.use(SchemaEngine)
 	.use(DashboardHooks);
 
 const client = new StarlightClient({

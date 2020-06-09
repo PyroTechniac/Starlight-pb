@@ -1,8 +1,8 @@
 import { Client, ClientEvents, PieceConstructor, Store } from '@klasa/core';
 import { ensureDir, scan } from 'fs-nextra';
-import { extname } from 'path';
 import { Asset } from './Asset';
 import { StarlightEvents } from '../types/enums';
+import { extname } from 'path';
 
 export class AssetStore extends Store<Asset> {
 
@@ -22,12 +22,15 @@ export class AssetStore extends Store<Asset> {
 		const { basePath } = Asset;
 
 		const files = await scan(basePath, {
-			filter: (dirent, path): boolean => dirent.isFile() && ['.webp', '.png', '.jpg', '.gif'].includes(extname(path))
+			filter: (dirent, path): boolean => dirent.isFile() && AssetStore.kExtensionRegex.test(path)
 		})
-			.then((f): string[] => [...f.keys()].filter((path): boolean => !filepaths.includes(path)))
-			.catch(() => ensureDir(basePath).catch((err): void => { this.client.emit(ClientEvents.Error, err); }));
-
-		if (!files) return super.init();
+			.then((f): string[] => [...f.keys()].filter((file): boolean => !filepaths.includes(extname(file))))
+			.catch((): Promise<string[]> => ensureDir(basePath)
+				.then((): string[] => [])
+				.catch(err => {
+					this.client.emit(ClientEvents.Error, err);
+					return [];
+				}));
 
 		if (files.length) {
 			for (const file of files) this.client.emit(StarlightEvents.Warn, `No Asset found for ${file}.`);
@@ -35,5 +38,7 @@ export class AssetStore extends Store<Asset> {
 
 		return super.init();
 	}
+
+	private static kExtensionRegex = /\.(bmp|jpe?g|png|gif|webp)$/;
 
 }

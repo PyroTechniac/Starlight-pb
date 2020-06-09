@@ -2,7 +2,7 @@ import type { Message } from '@klasa/core';
 import { codeBlock, toTitleCase } from '@klasa/utils';
 import { Command, CommandOptions, SchemaEntry, SettingsFolder } from 'klasa';
 import type { ConfCommand } from '../../../lib/types/interfaces';
-import { mergeOptions } from '../../../lib/util/decorators';
+import { mergeOptions, createResolvers } from '../../../lib/util/decorators';
 
 @mergeOptions<CommandOptions>({
 	guarded: true,
@@ -11,20 +11,18 @@ import { mergeOptions } from '../../../lib/util/decorators';
 	usage: '<set|remove|reset|show:default> (key:key) (value:value)',
 	usageDelim: ' '
 })
+@createResolvers([
+	['key', (arg, _possible, message, [action]): any => {
+		if (action === 'show' || arg) return arg || ''; // eslint-disable-line @typescript-eslint/no-unsafe-return
+		throw message.language.get('COMMAND_CONF_NOKEY');
+	}],
+	['value', (arg, possible, message, [action]): any => {
+		if (!['set', 'remove'].includes(action)) return null;
+		if (arg) return message.client.arguments.get('...string')!.run(arg, possible, message);
+		throw message.language.get('COMMAND_CONF_NOVALUE');
+	}]
+])
 export default class extends Command implements ConfCommand {
-
-	public init(): void {
-		this
-			.createCustomResolver('key', (arg, _possible, message, [action]): any => {
-				if (action === 'show' || arg) return arg || ''; // eslint-disable-line @typescript-eslint/no-unsafe-return
-				throw message.language.get('COMMAND_CONF_NOKEY');
-			})
-			.createCustomResolver('value', (arg, possible, message, [action]): any => {
-				if (!['set', 'remove'].includes(action)) return null;
-				if (arg) return this.client.arguments.get('...string')!.run(arg, possible, message);
-				throw message.language.get('COMMAND_CONF_NOVALUE');
-			});
-	}
 
 	public show(message: Message, [key]: [string]): Promise<Message[]> {
 		const schemaOrEntry = this.client.schemas.get('users', key);

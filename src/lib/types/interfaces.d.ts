@@ -1,6 +1,7 @@
-import type { Message } from '@klasa/core';
+import type { Message, Client } from '@klasa/core';
 import type { ServerOptions } from 'http';
-import type { Command } from 'klasa';
+import type { Command, Possible } from 'klasa';
+import type { StarlightPlugin } from '../client/StarlightPlugin';
 
 export interface Resolvable<V> {
 	resolve(): V | Promise<V>;
@@ -30,4 +31,12 @@ export interface DashboardHooksOptions {
 export interface AuthData {
 	token: string;
 	scope: string[];
+}
+
+export interface ClientEngine extends StarlightPlugin {
+	readonly client: Client;
+}
+
+export interface CustomResolverFunction {
+	(arg: any, possible: Possible, message: Message, additionalArgs: any[]): unknown;
 }

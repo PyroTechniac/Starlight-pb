@@ -1,14 +1,20 @@
 import { Cache } from '@klasa/cache';
-import { Client, Guild } from '@klasa/core';
+import { Guild, Client } from '@klasa/core';
 import { toTitleCase } from '@klasa/utils';
 import { KlasaClient, Schema, SchemaEntry, SchemaEntryJson, SchemaJson, SettingsFolder } from 'klasa';
+import { inspect, InspectOptionsStylized } from 'util';
+import type { ClientEngine } from '../types/interfaces';
 import type { StarlightPlugin } from '../client/StarlightPlugin';
 
-export class SchemaManager implements StarlightPlugin {
+export class SchemaEngine implements ClientEngine, StarlightPlugin {
 
 	#configurable: Cache<string, Schema | SchemaEntry> = new Cache(); // eslint-disable-line @typescript-eslint/explicit-member-accessibility
 
 	public constructor(public readonly client: KlasaClient) { }
+
+	public get size(): number {
+		return this.#configurable.size;
+	}
 
 	public initAll(): void {
 		for (const [name, { schema }] of this.client.gateways) {
@@ -20,16 +26,20 @@ export class SchemaManager implements StarlightPlugin {
 		return this.#configurable.get(`${prefix}/${path}`);
 	}
 
+	public clone(): Map<string, Schema | SchemaEntry> {
+		return new Map(this);
+	}
+
 	public *values(): IterableIterator<SchemaEntry | Schema> {
-		yield *this.#configurable.values();
+		yield* this.#configurable.values();
 	}
 
 	public *entries(): IterableIterator<[string, SchemaEntry | Schema]> {
-		yield *this.#configurable.entries();
+		yield* this.#configurable.entries();
 	}
 
 	public *keys(): IterableIterator<string> {
-		yield *this.#configurable.keys();
+		yield* this.#configurable.keys();
 	}
 
 	public displayFolder(prefix: string, settings: SettingsFolder): string {
@@ -65,18 +75,23 @@ export class SchemaManager implements StarlightPlugin {
 		return array.join('\n');
 	}
 
-	public *[Symbol.iterator](): IterableIterator<[string, SchemaEntry | Schema]> {
-		yield *this.#configurable;
+	public displayEntry(entry: SchemaEntry, value: unknown, guild: Guild | null = null): string {
+		return entry.array
+			? this.displayEntryMultiple(entry, value as readonly unknown[], guild)
+			: this.displayEntrySingle(entry, value, guild);
 	}
 
 	public toJSON(): Record<string, SchemaEntryJson | SchemaJson> {
 		return Object.fromEntries([...this].map(([key, value]): [string, SchemaEntryJson | SchemaJson] => [key, value.toJSON()]));
 	}
 
-	public displayEntry(entry: SchemaEntry, value: unknown, guild: Guild | null = null): string {
-		return entry.array
-			? this.displayEntryMultiple(entry, value as readonly unknown[], guild)
-			: this.displayEntrySingle(entry, value, guild);
+	public *[Symbol.iterator](): IterableIterator<[string, SchemaEntry | Schema]> {
+		yield* this.#configurable;
+	}
+
+	public [inspect.custom](depth: number, options: InspectOptionsStylized): string {
+		const clone = this.clone();
+		return inspect(clone, { ...options, depth }).replace(Map.name, this.constructor.name);
 	}
 
 	private displayEntryMultiple(entry: SchemaEntry, values: readonly unknown[], guild: Guild | null): string {
@@ -107,8 +122,8 @@ export class SchemaManager implements StarlightPlugin {
 		return this.#configurable.filter((_, key): boolean => key.startsWith(prefix));
 	}
 
-	public static [Client.plugin](this: Client): void {
-		this.schemas = new SchemaManager(this as KlasaClient);
+	public static [Client.plugin](this: KlasaClient): void {
+		this.schemas = new SchemaEngine(this);
 	}
 
 }

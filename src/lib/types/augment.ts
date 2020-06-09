@@ -1,5 +1,5 @@
 import type { AssetStore } from '../structures/AssetStore';
-import type { SchemaManager } from '../structures/SchemaManager';
+import type { SchemaEngine } from '../structures/SchemaEngine';
 import type { DashboardHooks } from '../http/DashboardHooks';
 import type { DashboardHooksOptions } from './interfaces';
 import type { RouteStore } from '../http/RouteStore';
@@ -11,10 +11,10 @@ declare module '@klasa/core/dist/src/lib/client/Client' {
 	export interface Client {
 		hooks: DashboardHooks;
 		assets: AssetStore;
-		schemas: SchemaManager;
 		routes: RouteStore;
 		middlewares: MiddlewareStore;
 		dashboardUsers: DataStore<DashboardUser>;
+		schemas: SchemaEngine;
 	}
 
 	export interface ClientOptions {

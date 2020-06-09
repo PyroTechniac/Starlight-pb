@@ -9,7 +9,8 @@
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
 		"incremental": true,
-		"listEmittedFiles": true
+		"listEmittedFiles": true,
+		"assumeChangesOnlyAffectDirectDependencies": true
 	},
 	"include": [
 		"src"
