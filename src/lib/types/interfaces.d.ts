@@ -1,7 +1,7 @@
 import type { Message, Client } from '@klasa/core';
 import type { ServerOptions } from 'http';
 import type { Command, Possible } from 'klasa';
-import type { StarlightPlugin } from '../client/StarlightPlugin';
+import type { StarlightPlugin } from '@client/StarlightPlugin';
 
 export interface Resolvable<V> {
 	resolve(): V | Promise<V>;

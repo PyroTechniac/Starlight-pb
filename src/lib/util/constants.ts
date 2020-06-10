@@ -1,7 +1,7 @@
 import { METHODS } from 'http';
 import { join } from 'path';
-import { StarlightIncomingMessage as IncomingMessage } from '../http/StarlightIncomingMessage';
-import { StarlightServerResponse as ServerResponse } from '../http/StarlightServerResponse';
+import { StarlightIncomingMessage as IncomingMessage } from '@http/StarlightIncomingMessage';
+import { StarlightServerResponse as ServerResponse } from '@http/StarlightServerResponse';
 
 export const rootFolder = join(__dirname, '..', '..', '..');
 

@@ -10,7 +10,26 @@
 		"emitDecoratorMetadata": true,
 		"incremental": true,
 		"listEmittedFiles": true,
-		"assumeChangesOnlyAffectDirectDependencies": true
+		"assumeChangesOnlyAffectDirectDependencies": true,
+		"baseUrl": ".",
+		"paths": {
+			"@utils/*": [
+				"src/lib/util/*"
+			],
+			"@lib/*": [
+				"src/lib/*"
+			],
+			"@root/*": [
+				"src/*"
+			],
+			"@client/*": [
+				"src/lib/client/*"
+			],
+			"@http/*": [
+				"src/lib/http/*"
+			]
+		},
+		"importsNotUsedAsValues": "error"
 	},
 	"include": [
 		"src"

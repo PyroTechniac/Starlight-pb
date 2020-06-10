@@ -1,8 +1,10 @@
-import { StarlightClient } from './lib/client/StarlightClient';
-import { config } from 'dotenv';
 import { Intents } from '@klasa/ws';
-import { SchemaEngine } from './lib/structures/SchemaEngine';
-import { DashboardHooks } from './lib/http/DashboardHooks';
+import { config } from 'dotenv';
+import 'module-alias/register';
+import 'reflect-metadata';
+import { StarlightClient } from '@client/StarlightClient';
+import { DashboardHooks } from '@http/DashboardHooks';
+import { SchemaEngine } from '@lib/structures/SchemaEngine';
 
 config();
 

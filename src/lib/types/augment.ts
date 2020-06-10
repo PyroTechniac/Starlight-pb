@@ -1,11 +1,11 @@
-import type { AssetStore } from '../structures/AssetStore';
-import type { SchemaEngine } from '../structures/SchemaEngine';
-import type { DashboardHooks } from '../http/DashboardHooks';
-import type { DashboardHooksOptions } from './interfaces';
-import type { RouteStore } from '../http/RouteStore';
-import type { MiddlewareStore } from '../http/MiddlewareStore';
+import type { AssetStore } from '@lib/structures/AssetStore';
+import type { SchemaEngine } from '@lib/structures/SchemaEngine';
+import type { DashboardHooks } from '@http/DashboardHooks';
+import type { DashboardHooksOptions } from '@lib/types/interfaces';
+import type { RouteStore } from '@http/RouteStore';
+import type { MiddlewareStore } from '@http/MiddlewareStore';
 import type { DataStore } from '@klasa/core';
-import type { DashboardUser } from '../http/DashboardUser';
+import type { DashboardUser } from '@http/DashboardUser';
 
 declare module '@klasa/core/dist/src/lib/client/Client' {
 	export interface Client {

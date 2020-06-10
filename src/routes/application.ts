@@ -1,8 +1,8 @@
 import { Duration } from '@klasa/duration';
-import { StarlightIncomingMessage } from '../lib/http/StarlightIncomingMessage';
-import { Route } from '../lib/http/Route';
-import { StarlightServerResponse } from '../lib/http/StarlightServerResponse';
-import { setRoute, ratelimit } from '../lib/util/decorators';
+import { StarlightIncomingMessage } from '@http/StarlightIncomingMessage';
+import { Route } from '@http/Route';
+import { StarlightServerResponse } from '@http/StarlightServerResponse';
+import { setRoute, ratelimit } from '@utils/decorators';
 
 @setRoute('application')
 export default class extends Route {

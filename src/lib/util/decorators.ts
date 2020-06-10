@@ -1,14 +1,14 @@
 import type { Constructor, Message, Piece, PieceConstructor, PieceOptions, Store } from '@klasa/core';
 import { isFunction } from '@klasa/utils';
 import { Extendable as KlasaExtendable, ExtendableOptions, ExtendableStore, ScheduledTask, ScheduledTaskOptions, Task, Command, CommandStore, CommandOptions } from 'klasa';
-import { StarlightEvents } from '../types/enums';
-import type { Route, RouteOptions } from '../http/Route';
-import { RouteStore } from '../http/RouteStore';
+import { StarlightEvents } from '@lib/types/enums';
+import type { Route, RouteOptions } from '@http/Route';
+import type { RouteStore } from '@http/RouteStore';
 import { RateLimitManager } from '@klasa/ratelimits';
-import type { StarlightIncomingMessage } from '../http/StarlightIncomingMessage';
-import type { StarlightServerResponse } from '../http/StarlightServerResponse';
-import { HTTPUtils } from './utils';
-import { CustomResolverFunction } from '../types/interfaces';
+import type { StarlightIncomingMessage } from '@http/StarlightIncomingMessage';
+import type { StarlightServerResponse } from '@http/StarlightServerResponse';
+import { HTTPUtils } from '@utils/utils';
+import type { CustomResolverFunction } from '@lib/types/interfaces';
 /* eslint-disable @typescript-eslint/ban-types */
 
 // #region Basic

@@ -1,6 +1,6 @@
-import { Inhibitor, Command } from 'klasa';
 import type { Message } from '@klasa/core';
 import { ChannelType } from '@klasa/dapi-types';
+import { Command, Inhibitor } from 'klasa';
 
 export default class extends Inhibitor {
 

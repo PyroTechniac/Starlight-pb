@@ -1,10 +1,10 @@
 import { Piece, PieceOptions } from '@klasa/core';
 import { mergeDefault } from '@klasa/utils';
-import type { ParsedRoute } from '../types/types';
-import { HTTPUtils } from '../util/utils';
-import type { StarlightIncomingMessage as IncomingMessage } from './StarlightIncomingMessage';
-import type { RouteStore } from './RouteStore';
-import type { StarlightServerResponse as ServerResponse } from './StarlightServerResponse';
+import type { ParsedRoute } from '@lib/types/types';
+import { HTTPUtils } from '@utils/utils';
+import type { StarlightIncomingMessage as IncomingMessage } from '@http/StarlightIncomingMessage';
+import type { RouteStore } from '@http/RouteStore';
+import type { StarlightServerResponse as ServerResponse } from '@http/StarlightServerResponse';
 import parse = HTTPUtils.parse;
 
 export class Route extends Piece {

@@ -1,7 +1,7 @@
 import { Client, PieceConstructor, Store } from '@klasa/core';
 import { METHODS } from 'http';
-import { HTTPConstants } from '../util/constants';
-import { Route } from './Route';
+import { HTTPConstants } from '@utils/constants';
+import { Route } from '@http/Route';
 import METHODS_LOWER = HTTPConstants.METHODS_LOWER;
 
 export class RouteStore extends Store<Route> {

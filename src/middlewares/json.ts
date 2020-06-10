@@ -1,6 +1,6 @@
-import { Middleware, MiddlewareOptions } from '../lib/http/Middleware';
-import { mergeOptions } from '../lib/util/decorators';
-import type { StarlightIncomingMessage } from '../lib/http/StarlightIncomingMessage';
+import { Middleware, MiddlewareOptions } from '@http/Middleware';
+import { mergeOptions } from '@utils/decorators';
+import type { StarlightIncomingMessage } from '@http/StarlightIncomingMessage';
 import type { Transform } from 'stream';
 import { createInflate, createGunzip } from 'zlib';
 

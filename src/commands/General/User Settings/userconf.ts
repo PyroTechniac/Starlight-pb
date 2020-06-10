@@ -1,10 +1,12 @@
 import type { Message } from '@klasa/core';
 import { codeBlock, toTitleCase } from '@klasa/utils';
+import type { ConfCommand } from '@lib/types/interfaces';
+import { createResolvers, mergeOptions } from '@utils/decorators';
 import { Command, CommandOptions, SchemaEntry, SettingsFolder } from 'klasa';
-import type { ConfCommand } from '../../../lib/types/interfaces';
-import { mergeOptions, createResolvers } from '../../../lib/util/decorators';
 
+// It is disabled, but kept for backwards compatibility
 @mergeOptions<CommandOptions>({
+	enabled: false,
 	guarded: true,
 	subcommands: true,
 	description: (lang): string => lang.get('COMMAND_CONF_USER_DESCRIPTION'),

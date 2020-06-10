@@ -1,5 +1,5 @@
 import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
-import type { ParsedPart } from '../types/interfaces';
+import type { ParsedPart } from '@lib/types/interfaces';
 
 export function noop(): null {
 	return null;

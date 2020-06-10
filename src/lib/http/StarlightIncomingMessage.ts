@@ -1,9 +1,9 @@
 import type { Client } from '@klasa/core';
 import { IncomingMessage as Base } from 'http';
 import { parse } from 'url';
-import { HTTPUtils } from '../util/utils';
-import type { Route } from './Route';
-import type { StarlightServerResponse as ServerResponse } from './StarlightServerResponse';
+import { HTTPUtils } from '@utils/utils';
+import type { Route } from '@http/Route';
+import type { StarlightServerResponse as ServerResponse } from '@http/StarlightServerResponse';
 import split = HTTPUtils.split;
 
 export class StarlightIncomingMessage extends Base {

@@ -1,5 +1,5 @@
-import { Client, Permissions, PermissionsFlags, Guild } from '@klasa/core';
-import type { DashboardUser } from './DashboardUser';
+import type { DashboardUser } from '@http/DashboardUser';
+import { Client, Guild, Permissions, PermissionsFlags } from '@klasa/core';
 
 export interface OAuthGuildData {
 	id: string;

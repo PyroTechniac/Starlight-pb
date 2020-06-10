@@ -3,8 +3,8 @@ import { Guild, Client } from '@klasa/core';
 import { toTitleCase } from '@klasa/utils';
 import { KlasaClient, Schema, SchemaEntry, SchemaEntryJson, SchemaJson, SettingsFolder } from 'klasa';
 import { inspect, InspectOptionsStylized } from 'util';
-import type { ClientEngine } from '../types/interfaces';
-import type { StarlightPlugin } from '../client/StarlightPlugin';
+import type { ClientEngine } from '@lib/types/interfaces';
+import type { StarlightPlugin } from '@client/StarlightPlugin';
 
 export class SchemaEngine implements ClientEngine, StarlightPlugin {
 
@@ -31,15 +31,15 @@ export class SchemaEngine implements ClientEngine, StarlightPlugin {
 	}
 
 	public *values(): IterableIterator<SchemaEntry | Schema> {
-		yield* this.#configurable.values();
+		yield *this.#configurable.values();
 	}
 
 	public *entries(): IterableIterator<[string, SchemaEntry | Schema]> {
-		yield* this.#configurable.entries();
+		yield *this.#configurable.entries();
 	}
 
 	public *keys(): IterableIterator<string> {
-		yield* this.#configurable.keys();
+		yield *this.#configurable.keys();
 	}
 
 	public displayFolder(prefix: string, settings: SettingsFolder): string {
@@ -86,7 +86,7 @@ export class SchemaEngine implements ClientEngine, StarlightPlugin {
 	}
 
 	public *[Symbol.iterator](): IterableIterator<[string, SchemaEntry | Schema]> {
-		yield* this.#configurable;
+		yield *this.#configurable;
 	}
 
 	public [inspect.custom](depth: number, options: InspectOptionsStylized): string {

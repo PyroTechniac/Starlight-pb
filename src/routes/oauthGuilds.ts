@@ -1,11 +1,11 @@
-import { Route } from '../lib/http/Route';
-import { setRoute, ratelimit, authenticated } from '../lib/util/decorators';
-import { StarlightIncomingMessage } from '../lib/http/StarlightIncomingMessage';
-import { StarlightServerResponse } from '../lib/http/StarlightServerResponse';
-import { Time } from '../lib/types/enums';
+import { Route } from '@http/Route';
+import { setRoute, ratelimit, authenticated } from '@utils/decorators';
+import { StarlightIncomingMessage } from '@http/StarlightIncomingMessage';
+import { StarlightServerResponse } from '@http/StarlightServerResponse';
+import { Time } from '@lib/types/enums';
 import { ClientEvents } from '@klasa/core';
 import { inspect } from 'util';
-import { HTTPConstants } from '../lib/util/constants';
+import { HTTPConstants } from '@utils/constants';
 
 @setRoute('oauth/user/guilds')
 export default class extends Route {

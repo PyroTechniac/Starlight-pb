@@ -3,10 +3,10 @@ import type { File } from '@klasa/rest';
 import { mergeDefault } from '@klasa/utils';
 import { promises as fsp } from 'fs';
 import { join } from 'path';
-import type { Resolvable } from '../types/interfaces';
-import { rootFolder } from '../util/constants';
-import { noop } from '../util/utils';
-import type { AssetStore } from './AssetStore';
+import type { Resolvable } from '@lib/types/interfaces';
+import { rootFolder } from '@utils/constants';
+import { noop } from '@utils/utils';
+import type { AssetStore } from '@lib/structures/AssetStore';
 import readFile = fsp.readFile;
 
 export abstract class Asset extends Piece implements Resolvable<File> {

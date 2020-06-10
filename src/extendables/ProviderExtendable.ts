@@ -1,5 +1,5 @@
+import { Extendable } from '@utils/decorators';
 import { Provider } from 'klasa';
-import { Extendable } from '../lib/util/decorators';
 
 export default class extends Extendable(Provider) {
 

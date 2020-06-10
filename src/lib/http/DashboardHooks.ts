@@ -1,16 +1,16 @@
 import { Client, ClientEvents, DataStore, Constructor } from '@klasa/core';
 import { createServer, Server, STATUS_CODES } from 'http';
-import type { StarlightIncomingMessage as IncomingMessage } from './StarlightIncomingMessage';
-import type { StarlightServerResponse as ServerResponse } from './StarlightServerResponse';
-import type { StarlightPlugin } from '../client/StarlightPlugin';
-import { HTTPConstants } from '../util/constants';
+import type { StarlightIncomingMessage as IncomingMessage } from '@http/StarlightIncomingMessage';
+import type { StarlightServerResponse as ServerResponse } from '@http/StarlightServerResponse';
+import type { StarlightPlugin } from '@client/StarlightPlugin';
+import { HTTPConstants } from '@utils/constants';
 import { mergeDefault } from '@klasa/utils';
 import OPTIONS = HTTPConstants.OPTIONS;
-import { RouteStore } from './RouteStore';
-import { MiddlewareStore } from './MiddlewareStore';
+import { RouteStore } from '@http/RouteStore';
+import { MiddlewareStore } from '@http/MiddlewareStore';
 import { join } from 'path';
-import { StarlightEvents } from '../types/enums';
-import { DashboardUser } from './DashboardUser';
+import { StarlightEvents } from '@lib/types/enums';
+import { DashboardUser } from '@http/DashboardUser';
 
 interface ErrorLike {
 	code?: number;

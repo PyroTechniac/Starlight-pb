@@ -1,8 +1,8 @@
 import { Client, PieceConstructor, Store } from '@klasa/core';
-import type { StarlightIncomingMessage as IncomingMessage } from './StarlightIncomingMessage';
-import { Middleware } from './Middleware';
-import type { Route } from './Route';
-import type { StarlightServerResponse as ServerResponse } from './StarlightServerResponse';
+import type { StarlightIncomingMessage as IncomingMessage } from '@http/StarlightIncomingMessage';
+import { Middleware } from '@http/Middleware';
+import type { Route } from '@http/Route';
+import type { StarlightServerResponse as ServerResponse } from '@http/StarlightServerResponse';
 
 export class MiddlewareStore extends Store<Middleware> {
 

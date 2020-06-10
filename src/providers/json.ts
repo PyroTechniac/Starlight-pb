@@ -1,5 +1,5 @@
 import { outputJSONAtomic, readJSON } from 'fs-nextra';
-import { FileSystemProvider } from '../lib/extensions/FileSystemProvider';
+import { FileSystemProvider } from '@lib/extensions/FileSystemProvider';
 
 export default class extends FileSystemProvider {
 

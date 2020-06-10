@@ -1,9 +1,9 @@
 import { Message } from '@klasa/core';
 import { ChannelType } from '@klasa/dapi-types';
 import { codeBlock, toTitleCase } from '@klasa/utils';
+import type { ConfCommand } from '@lib/types/interfaces';
+import { createResolvers, mergeOptions, requiresPermission } from '@utils/decorators';
 import { Command, CommandOptions, SchemaEntry, SettingsFolder } from 'klasa';
-import type { ConfCommand } from '../../lib/types/interfaces';
-import { mergeOptions, requiresPermission, createResolvers } from '../../lib/util/decorators';
 
 @mergeOptions<CommandOptions>({
 	runIn: [ChannelType.GuildText],

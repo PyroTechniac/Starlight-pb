@@ -1,5 +1,5 @@
 import { ServerResponse as Base, STATUS_CODES } from 'http';
-import { MimeTypes } from '../types/enums';
+import { MimeTypes } from '@lib/types/enums';
 
 export class StarlightServerResponse extends Base {
 

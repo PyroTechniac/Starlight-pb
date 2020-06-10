@@ -1,9 +1,9 @@
-import type { StarlightIncomingMessage } from '../lib/http/StarlightIncomingMessage';
-import { Middleware, MiddlewareOptions } from '../lib/http/Middleware';
-import type { Route } from '../lib/http/Route';
-import type { StarlightServerResponse } from '../lib/http/StarlightServerResponse';
-import { mergeOptions } from '../lib/util/decorators';
-import { HTTPUtils } from '../lib/util/utils';
+import type { StarlightIncomingMessage } from '@http/StarlightIncomingMessage';
+import { Middleware, MiddlewareOptions } from '@http/Middleware';
+import type { Route } from '@http/Route';
+import type { StarlightServerResponse } from '@http/StarlightServerResponse';
+import { mergeOptions } from '@utils/decorators';
+import { HTTPUtils } from '@utils/utils';
 
 @mergeOptions<MiddlewareOptions>({
 	priority: 100

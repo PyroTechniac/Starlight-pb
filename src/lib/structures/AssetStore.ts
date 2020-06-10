@@ -1,7 +1,7 @@
 import { Client, ClientEvents, PieceConstructor, Store } from '@klasa/core';
 import { ensureDir, scan } from 'fs-nextra';
-import { Asset } from './Asset';
-import { StarlightEvents } from '../types/enums';
+import { Asset } from '@lib/structures/Asset';
+import { StarlightEvents } from '@lib/types/enums';
 import { extname } from 'path';
 
 export class AssetStore extends Store<Asset> {

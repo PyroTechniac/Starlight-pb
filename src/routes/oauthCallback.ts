@@ -1,13 +1,13 @@
-import { Route } from '../lib/http/Route';
-import { setRoute, ratelimit } from '../lib/util/decorators';
-import type OAuthUser from './oauthUser';
-import { StarlightIncomingMessage } from '../lib/http/StarlightIncomingMessage';
-import { StarlightServerResponse } from '../lib/http/StarlightServerResponse';
-import { Time } from '../lib/types/enums';
-import { HTTPConstants } from '../lib/util/constants';
+import { Route } from '@http/Route';
+import { setRoute, ratelimit } from '@utils/decorators';
+import type OAuthUser from '@root/routes/oauthUser';
+import { StarlightIncomingMessage } from '@http/StarlightIncomingMessage';
+import { StarlightServerResponse } from '@http/StarlightServerResponse';
+import { Time } from '@lib/types/enums';
+import { HTTPConstants } from '@utils/constants';
 import { URL, URLSearchParams } from 'url';
 import fetch from 'node-fetch';
-import { HTTPUtils } from '../lib/util/utils';
+import { HTTPUtils } from '@utils/utils';
 
 @setRoute('oauth/callback')
 export default class extends Route {

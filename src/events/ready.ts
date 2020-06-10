@@ -1,5 +1,5 @@
 import { Event, EventOptions } from '@klasa/core';
-import { mergeOptions } from '../lib/util/decorators';
+import { mergeOptions } from '@utils/decorators';
 
 @mergeOptions<EventOptions>({ once: true })
 export default class extends Event {

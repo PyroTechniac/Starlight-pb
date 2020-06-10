@@ -1,7 +1,7 @@
-import { Middleware, MiddlewareOptions } from '../lib/http/Middleware';
-import { mergeOptions } from '../lib/util/decorators';
-import type { StarlightIncomingMessage } from '../lib/http/StarlightIncomingMessage';
-import type { StarlightServerResponse } from '../lib/http/StarlightServerResponse';
+import { Middleware, MiddlewareOptions } from '@http/Middleware';
+import { mergeOptions } from '@utils/decorators';
+import type { StarlightIncomingMessage } from '@http/StarlightIncomingMessage';
+import type { StarlightServerResponse } from '@http/StarlightServerResponse';
 
 @mergeOptions<MiddlewareOptions>({
 	priority: 10
