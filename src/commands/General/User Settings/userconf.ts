@@ -35,7 +35,7 @@ export default class extends Command implements ConfCommand {
 			return message.sendLocale('COMMAND_CONF_GET', [key, this.client.schemas.displayEntry(schemaOrEntry, value, message.guild)]);
 		}
 
-		return message.sendLocale('COMMAND_CONF_SERVER', [
+		return message.sendLocale('COMMAND_CONF_USER', [
 			key ? `: ${key.split('.').map(toTitleCase).join('/')}` : '',
 			codeBlock('asciidoc', this.client.schemas.displayFolder('users', value as SettingsFolder))
 		]);

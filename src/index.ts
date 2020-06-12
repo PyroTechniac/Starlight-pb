@@ -3,13 +3,12 @@ import { config } from 'dotenv';
 import 'module-alias/register';
 import 'reflect-metadata';
 import { StarlightClient } from '@client/StarlightClient';
-import { DashboardHooks } from '@http/DashboardHooks';
+import '@lib/extensions/StarlightUser';
 import { SchemaEngine } from '@lib/structures/SchemaEngine';
 
 config();
 
-StarlightClient.use(SchemaEngine)
-	.use(DashboardHooks);
+StarlightClient.use(SchemaEngine);
 
 const client = new StarlightClient({
 	commands: {

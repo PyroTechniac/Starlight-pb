@@ -5,12 +5,6 @@ export const enum StarlightEvents {
 	Warn = 'warn'
 }
 
-export const enum MimeTypes {
-	ApplicationJson = 'application/json',
-	ApplicationFormUrlEncoded = 'application/x-www-form-urlencoded',
-	TextPlain = 'text/plain'
-}
-
 export const enum Time {
 	Millisecond = 1,
 	Second = Millisecond * 1000,

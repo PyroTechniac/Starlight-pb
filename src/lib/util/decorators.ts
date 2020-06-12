@@ -2,12 +2,6 @@ import type { Constructor, Message, Piece, PieceConstructor, PieceOptions, Store
 import { isFunction } from '@klasa/utils';
 import { Extendable as KlasaExtendable, ExtendableOptions, ExtendableStore, ScheduledTask, ScheduledTaskOptions, Task, Command, CommandStore, CommandOptions } from 'klasa';
 import { StarlightEvents } from '@lib/types/enums';
-import type { Route, RouteOptions } from '@http/Route';
-import type { RouteStore } from '@http/RouteStore';
-import { RateLimitManager } from '@klasa/ratelimits';
-import type { StarlightIncomingMessage } from '@http/StarlightIncomingMessage';
-import type { StarlightServerResponse } from '@http/StarlightServerResponse';
-import { HTTPUtils } from '@utils/utils';
 import type { CustomResolverFunction } from '@lib/types/interfaces';
 /* eslint-disable @typescript-eslint/ban-types */
 
@@ -111,59 +105,6 @@ export function ensureTask(time: string | number | Date, data?: ScheduledTaskOpt
 }
 
 // #endregion Tasks
-
-// #region Routes
-
-export function setRoute(route: string): Function {
-	return createClassDecorator((target: PieceConstructor<Route>): PieceConstructor<Route> => class extends target {
-
-		public constructor(store: RouteStore, directory: string, files: readonly string[], options: Omit<RouteOptions, 'route'> = {}) {
-			super(store, directory, files, { ...options, route } as RouteOptions);
-		}
-
-	} as unknown as PieceConstructor<Route>);
-}
-
-export function ratelimit(bucket: number, cooldown: number, auth = false): MethodDecorator {
-	const manager = new RateLimitManager(bucket, cooldown);
-	const xRateLimitLimit = bucket;
-	return createFunctionInhibitor(
-		(request: StarlightIncomingMessage, response: StarlightServerResponse): boolean => {
-			const id = (auth ? request.auth.user_id as string : request.headers['x-forwarded-for'] as string || request.connection.remoteAddress!);
-			const bucket = manager.acquire(id);
-
-			response.setHeader('Date', new Date().toUTCString());
-			if (bucket.limited) {
-				response.setHeader('Retry-After', bucket.remainingTime.toString());
-				return false;
-			}
-
-			try {
-				bucket.drip();
-			} catch { }
-
-			response.setHeader('X-RateLimit-Limit', xRateLimitLimit);
-			response.setHeader('X-RateLimit-Remaining', bucket.bucket.toString());
-			response.setHeader('X-RateLimit-Reset', bucket.remainingTime.toString());
-
-			return true;
-		},
-		(_request: StarlightIncomingMessage, response: StarlightServerResponse): void => response.error(429)
-	);
-}
-
-export const authenticated = createFunctionInhibitor(
-	(request: StarlightIncomingMessage): boolean => {
-		if (!request.headers.authorization) return false;
-		request.auth = HTTPUtils.decrypt(request.headers.authorization, process.env.CLIENT_SECRET!);
-		return !(!request.auth.user_id || request.auth.token);
-	},
-	(_request: StarlightIncomingMessage, response: StarlightServerResponse): void => {
-		response.error(403);
-	}
-);
-
-// #endregion Routes
 
 // #region Interfaces
 

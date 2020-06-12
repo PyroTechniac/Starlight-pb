@@ -8,7 +8,11 @@ import type { StarlightPlugin } from '@client/StarlightPlugin';
 
 export class SchemaEngine implements ClientEngine, StarlightPlugin {
 
-	#configurable: Cache<string, Schema | SchemaEntry> = new Cache(); // eslint-disable-line @typescript-eslint/explicit-member-accessibility
+	/* eslint-disable @typescript-eslint/explicit-member-accessibility */
+	#configurable: Cache<string, Schema | SchemaEntry> = new Cache();
+
+	#initialized = false;
+	/* eslint-enable @typescript-eslint/explicit-member-accessibility */
 
 	public constructor(public readonly client: KlasaClient) { }
 
@@ -17,9 +21,12 @@ export class SchemaEngine implements ClientEngine, StarlightPlugin {
 	}
 
 	public initAll(): void {
+		// If we're initializing again, don't do anything
+		if (this.#initialized) return;
 		for (const [name, { schema }] of this.client.gateways) {
 			if (this.init(name, schema)) this.#configurable.set(`${name}/${schema.path}`, schema);
 		}
+		this.#initialized = true;
 	}
 
 	public get(prefix: string, path: string): Schema | SchemaEntry | undefined {

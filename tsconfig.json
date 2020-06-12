@@ -24,9 +24,6 @@
 			],
 			"@client/*": [
 				"src/lib/client/*"
-			],
-			"@http/*": [
-				"src/lib/http/*"
 			]
 		},
 		"importsNotUsedAsValues": "error"
