@@ -4,11 +4,8 @@ import 'module-alias/register';
 import 'reflect-metadata';
 import { StarlightClient } from '@client/StarlightClient';
 import '@lib/extensions/StarlightUser';
-import { SchemaEngine } from '@lib/structures/SchemaEngine';
 
 config();
-
-StarlightClient.use(SchemaEngine);
 
 const client = new StarlightClient({
 	commands: {
@@ -27,10 +24,6 @@ const client = new StarlightClient({
 	},
 	providers: {
 		'default': process.env.PROVIDER ?? 'json'
-	},
-	hooks: {
-		clientID: process.env.CLIENT_ID,
-		clientSecret: process.env.CLIENT_SECRET
 	}
 });
 

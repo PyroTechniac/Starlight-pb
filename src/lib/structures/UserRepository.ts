@@ -1,12 +1,9 @@
+import { EntityRepository } from 'typeorm';
 import { UserEntity } from '../entities/UserEntity';
-import { EntityRepository, Repository } from 'typeorm';
+import { BaseRepository } from './BaseRepository';
 
 @EntityRepository(UserEntity)
-export class UserRepository extends Repository<UserEntity> {
-
-	public async acquire(id: string): Promise<UserEntity> {
-		return (await this.findByID(id)) ?? this.createAndSave(id);
-	}
+export class UserRepository extends BaseRepository<UserEntity> {
 
 	public createAndSave(id: string): Promise<UserEntity> {
 		const user = new UserEntity();

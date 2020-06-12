@@ -1,6 +1,6 @@
 import type { Message, Client } from '@klasa/core';
 import type { Command, Possible } from 'klasa';
-import type { StarlightPlugin } from '@client/StarlightPlugin';
+import type { ClientManager } from '@lib/structures/ClientManager';
 
 export interface Resolvable<V> {
 	resolve(): V | Promise<V>;
@@ -13,7 +13,8 @@ export interface ConfCommand extends Command {
 	reset(message: Message, [key]: [string]): Promise<Message[]>;
 }
 
-export interface ClientEngine extends StarlightPlugin {
+export interface ClientEngine {
+	readonly manager:ClientManager;
 	readonly client: Client;
 }
 

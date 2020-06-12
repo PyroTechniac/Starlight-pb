@@ -1,12 +1,12 @@
 import { Cache } from '@klasa/cache';
-import { Guild, Client } from '@klasa/core';
+import { Guild } from '@klasa/core';
 import { toTitleCase } from '@klasa/utils';
+import type { ClientEngine } from '@lib/types/interfaces';
 import { KlasaClient, Schema, SchemaEntry, SchemaEntryJson, SchemaJson, SettingsFolder } from 'klasa';
 import { inspect, InspectOptionsStylized } from 'util';
-import type { ClientEngine } from '@lib/types/interfaces';
-import type { StarlightPlugin } from '@client/StarlightPlugin';
+import type { ClientManager } from './ClientManager';
 
-export class SchemaEngine implements ClientEngine, StarlightPlugin {
+export class SchemaEngine implements ClientEngine {
 
 	/* eslint-disable @typescript-eslint/explicit-member-accessibility */
 	#configurable: Cache<string, Schema | SchemaEntry> = new Cache();
@@ -14,7 +14,11 @@ export class SchemaEngine implements ClientEngine, StarlightPlugin {
 	#initialized = false;
 	/* eslint-enable @typescript-eslint/explicit-member-accessibility */
 
-	public constructor(public readonly client: KlasaClient) { }
+	public constructor(public readonly manager: ClientManager) { }
+
+	public get client(): KlasaClient {
+		return this.manager.client;
+	}
 
 	public get size(): number {
 		return this.#configurable.size;
@@ -127,10 +131,6 @@ export class SchemaEngine implements ClientEngine, StarlightPlugin {
 
 	private filteredKeys(prefix: string): Cache<string, Schema | SchemaEntry> {
 		return this.#configurable.filter((_, key): boolean => key.startsWith(prefix));
-	}
-
-	public static [Client.plugin](this: KlasaClient): void {
-		this.schemas = new SchemaEngine(this);
 	}
 
 }
