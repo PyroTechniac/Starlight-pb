@@ -2,17 +2,20 @@ import { AssetStore } from '@lib/structures/AssetStore';
 import { ClientManager } from '@lib/structures/ClientManager';
 import type { TypeORMEngine } from '@lib/structures/TypeORMEngine';
 import { KlasaClient } from 'klasa';
+import type { ContentDeliveryNetwork } from '@lib/structures/cdn/ContentDeliveryNetwork';
 
 export class StarlightClient extends KlasaClient {
 
-	/* eslint-disable @typescript-eslint/no-invalid-this */
 	public readonly manager: ClientManager = new ClientManager(this);
 
 	public assets: AssetStore = new AssetStore(this);
-	/* eslint-enable @typescript-eslint/no-invalid-this */
 
 	public get typeORM(): TypeORMEngine {
 		return this.manager.typeORM;
+	}
+
+	public get cdn(): ContentDeliveryNetwork {
+		return this.manager.cdn;
 	}
 
 	public async connect(): Promise<void> {

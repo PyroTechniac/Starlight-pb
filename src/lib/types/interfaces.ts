@@ -2,6 +2,8 @@ import type { Message, Client } from '@klasa/core';
 import type { Command, Possible } from 'klasa';
 import type { ClientManager } from '@lib/structures/ClientManager';
 import type { Inhibitor, Fallback } from '@utils/decorators';
+import type { FetchTypes } from '@lib/types/types';
+import type { RequestInit } from 'node-fetch';
 
 export interface Resolvable<V> {
 	resolve(): V | Promise<V>;
@@ -27,4 +29,11 @@ export interface FunctionInhibitorMetadata {
 	propertyKey: PropertyKey;
 	inhibitor: Inhibitor;
 	fallback: Fallback;
+}
+
+export interface ContentNodeJSON {
+	url: string;
+	createdAt: number;
+	type: FetchTypes;
+	options: RequestInit;
 }

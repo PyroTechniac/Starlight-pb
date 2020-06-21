@@ -1,10 +1,13 @@
+import { ContentDeliveryNetwork } from '@lib/structures/cdn/ContentDeliveryNetwork';
+import { TypeORMEngine } from '@lib/structures/TypeORMEngine';
 import type { ClientEngine } from '@lib/types/interfaces';
 import type { KlasaClient } from 'klasa';
-import { TypeORMEngine } from './TypeORMEngine';
 
 export class ClientManager implements ClientEngine {
 
-	public typeORM: TypeORMEngine = new TypeORMEngine(this); // eslint-disable-line @typescript-eslint/no-invalid-this
+	public typeORM: TypeORMEngine = new TypeORMEngine(this);
+
+	public cdn: ContentDeliveryNetwork = new ContentDeliveryNetwork(this);
 
 	public constructor(public readonly client: KlasaClient) {}
 
