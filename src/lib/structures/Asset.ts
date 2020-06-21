@@ -5,7 +5,7 @@ import { promises as fsp } from 'fs';
 import { join } from 'path';
 import type { Resolvable } from '@lib/types/interfaces';
 import { rootFolder } from '@utils/constants';
-import { noop } from '@utils/utils';
+import { noop } from '@utils/util';
 import type { AssetStore } from '@lib/structures/AssetStore';
 import readFile = fsp.readFile;
 

@@ -1,12 +1,10 @@
-import type { ClientEngine } from "@lib/types/interfaces";
-import type { KlasaClient } from "klasa";
-import { SchemaEngine } from "@lib/structures/SchemaEngine";
-import { TypeORMEngine } from "./TypeORMEngine";
+import type { ClientEngine } from '@lib/types/interfaces';
+import type { KlasaClient } from 'klasa';
+import { TypeORMEngine } from './TypeORMEngine';
 
 export class ClientManager implements ClientEngine {
-	public schemas: SchemaEngine = new SchemaEngine(this);
 
-	public typeORM: TypeORMEngine = new TypeORMEngine(this);
+	public typeORM: TypeORMEngine = new TypeORMEngine(this); // eslint-disable-line @typescript-eslint/no-invalid-this
 
 	public constructor(public readonly client: KlasaClient) {}
 
@@ -14,4 +12,5 @@ export class ClientManager implements ClientEngine {
 	public get manager(): ClientManager {
 		return this;
 	}
+
 }

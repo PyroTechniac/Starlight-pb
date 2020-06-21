@@ -1,6 +1,7 @@
 import type { Message, Client } from '@klasa/core';
 import type { Command, Possible } from 'klasa';
 import type { ClientManager } from '@lib/structures/ClientManager';
+import type { Inhibitor, Fallback } from '@utils/decorators';
 
 export interface Resolvable<V> {
 	resolve(): V | Promise<V>;
@@ -14,10 +15,16 @@ export interface ConfCommand extends Command {
 }
 
 export interface ClientEngine {
-	readonly manager:ClientManager;
+	readonly manager: ClientManager;
 	readonly client: Client;
 }
 
 export interface CustomResolverFunction {
 	(arg: any, possible: Possible, message: Message, additionalArgs: any[]): unknown;
+}
+
+export interface FunctionInhibitorMetadata {
+	propertyKey: PropertyKey;
+	inhibitor: Inhibitor;
+	fallback: Fallback;
 }

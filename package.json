@@ -12,9 +12,9 @@
 		"clean": "rimraf dist"
 	},
 	"dependencies": {
-		"@klasa/core": "dirigeants/core#build",
+		"@klasa/core": "dirigeants/core#6badd298d654c7607b41722def06c57bc80c3253",
 		"dotenv": "^8.2.0",
-		"klasa": "dirigeants/klasa#build",
+		"klasa": "dirigeants/klasa#c1829a58ed96729601ceee159ec95992fbf8b55b",
 		"module-alias": "^2.2.2",
 		"reflect-metadata": "^0.1.13",
 		"sqlite3": "^4.2.0",

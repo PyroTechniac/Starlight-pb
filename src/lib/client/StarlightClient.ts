@@ -1,8 +1,7 @@
 import { AssetStore } from '@lib/structures/AssetStore';
-import { KlasaClient } from 'klasa';
 import { ClientManager } from '@lib/structures/ClientManager';
-import type { SchemaEngine } from '@lib/structures/SchemaEngine';
 import type { TypeORMEngine } from '@lib/structures/TypeORMEngine';
+import { KlasaClient } from 'klasa';
 
 export class StarlightClient extends KlasaClient {
 
@@ -11,10 +10,6 @@ export class StarlightClient extends KlasaClient {
 
 	public assets: AssetStore = new AssetStore(this);
 	/* eslint-enable @typescript-eslint/no-invalid-this */
-
-	public get schemas(): SchemaEngine {
-		return this.manager.schemas;
-	}
 
 	public get typeORM(): TypeORMEngine {
 		return this.manager.typeORM;
