@@ -53,7 +53,7 @@ export class ContentDeliveryNetwork extends Cache<string, ContentNode> implement
 		return node;
 	}
 
-	public async fetch(force = false): Promise<ContentNode[]> {
+	public async fetch(force?: boolean): Promise<ContentNode[]> {
 		return Promise.all(this.map((node): Promise<ContentNode> => node.fetch(force)));
 	}
 

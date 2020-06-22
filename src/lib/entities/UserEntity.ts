@@ -1,12 +1,32 @@
 import { Entity, PrimaryColumn, Column } from 'typeorm';
+import { CommandState } from '@lib/entities/CommandState';
+import type { DefaultJSON } from '@lib/types/types';
 
 @Entity('users')
 export class UserEntity {
 
-	@PrimaryColumn({ type: 'bigint', unique: true })
+	@PrimaryColumn({ unique: true })
 	public id!: string;
 
-	@Column({ 'nullable': false, 'default': 0 })
-	public commandUses!: number;
+	@Column((): typeof CommandState => CommandState)
+	public commandState!: CommandState;
+
+	public set command(command: string) {
+		this.commandState.update(command);
+	}
+
+	public init(id: string): this {
+		this.id = id;
+		this.commandState = new CommandState();
+		this.commandState.init();
+		return this;
+	}
+
+	public toJSON(): DefaultJSON {
+		return {
+			id: this.id,
+			command: this.commandState
+		};
+	}
 
 }

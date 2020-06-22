@@ -13,6 +13,8 @@
 	},
 	"dependencies": {
 		"@klasa/core": "dirigeants/core#6badd298d654c7607b41722def06c57bc80c3253",
+		"@klasa/request-handler": "^0.0.3",
+		"abort-controller": "^3.0.0",
 		"dotenv": "^8.2.0",
 		"klasa": "dirigeants/klasa#c1829a58ed96729601ceee159ec95992fbf8b55b",
 		"module-alias": "^2.2.2",
@@ -30,7 +32,7 @@
 		"eslint": "^7.1.0",
 		"eslint-config-bamboo": "^5.0.0",
 		"rimraf": "^3.0.2",
-		"typescript": "^3.9.3"
+		"typescript": "^3.9.5"
 	},
 	"_moduleAliases": {
 		"@utils": "dist/lib/util",

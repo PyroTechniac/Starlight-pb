@@ -1,17 +1,19 @@
-import type { ContentDeliveryNetwork } from './ContentDeliveryNetwork';
-import fetch, { RequestInit, Response } from 'node-fetch';
 import type { Client } from '@klasa/core';
+import type { ContentDeliveryNetwork } from '@lib/structures/cdn/ContentDeliveryNetwork';
 import { Time } from '@lib/types/enums';
-import type { FetchTypes } from '@lib/types/types';
 import type { ContentNodeJSON } from '@lib/types/interfaces';
+import type { FetchTypes } from '@lib/types/types';
+import fetch, { RequestInit, Response } from 'node-fetch';
+import AbortController from 'abort-controller';
+import { TimerManager } from '@klasa/timer-manager';
 
 export class ContentNode {
 
-	public type!: FetchTypes;
+	public type: FetchTypes = 'json';
 
 	public createdTimestamp: number = Date.now();
 
-	public options!: RequestInit;
+	public options: RequestInit = {};
 
 	/* eslint-disable @typescript-eslint/explicit-member-accessibility */
 	#data: unknown = null;
@@ -19,9 +21,7 @@ export class ContentNode {
 	#timeout = Date.now() + (Time.Minute * 15);
 	/* eslint-enable @typescript-eslint/explicit-member-accessibility */
 
-	public constructor(public readonly store: ContentDeliveryNetwork, public readonly url: string) {
-		this.setup();
-	}
+	public constructor(public readonly store: ContentDeliveryNetwork, public readonly url: string) { }
 
 	public get expired(): boolean {
 		return Date.now() > this.#timeout && !this.fetching;
@@ -41,9 +41,9 @@ export class ContentNode {
 
 	public fetch(force = this.#data === null): Promise<ContentNode> {
 		const fetchStatus = this.store.fetchMap.get(this);
-		if (!force || fetchStatus) return fetchStatus || Promise.resolve(this);
+		if (!force && fetchStatus) return fetchStatus || Promise.resolve(this);
 
-		const sync = ContentNode.fetch(this.url, this.options, this.type).then((data): this => {
+		const sync = ContentNode.fetch(this).then((data): this => {
 			this.#data = data;
 			this.#timeout = Date.now() + (Time.Minute * 15);
 			return this;
@@ -64,12 +64,8 @@ export class ContentNode {
 	}
 
 	public setOptions(options: RequestInit = {}): this {
-		this.options = options;
+		this.options = { ...this.options, ...options };
 		return this;
-	}
-
-	public setup(): this {
-		return this.setType().setOptions();
 	}
 
 	public toString(): string {
@@ -85,8 +81,12 @@ export class ContentNode {
 		};
 	}
 
-	private static async fetch(url: string, options: RequestInit, type: FetchTypes): Promise<unknown> {
-		const result: Response = await fetch(url, options);
+	private static async fetch(node: ContentNode): Promise<unknown> {
+		const { url, options, type } = node;
+		const controller = new AbortController();
+		const timeout = TimerManager.setTimeout((): void => controller.abort(), 30000);
+		const result: Response = await fetch(url, { ...options, signal: controller.signal })
+			.finally((): void => TimerManager.clearTimeout(timeout));
 		if (!result.ok) throw result.status;
 
 		switch (type) {

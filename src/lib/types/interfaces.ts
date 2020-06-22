@@ -4,6 +4,7 @@ import type { ClientManager } from '@lib/structures/ClientManager';
 import type { Inhibitor, Fallback } from '@utils/decorators';
 import type { FetchTypes } from '@lib/types/types';
 import type { RequestInit } from 'node-fetch';
+import type { RequestHandler, IdKeyed } from '@klasa/request-handler';
 
 export interface Resolvable<V> {
 	resolve(): V | Promise<V>;
@@ -36,4 +37,10 @@ export interface ContentNodeJSON {
 	createdAt: number;
 	type: FetchTypes;
 	options: RequestInit;
+}
+
+export interface Requestable<K, V extends IdKeyed<K>> {
+	requestHandler: RequestHandler<K, V>;
+	request(id: K): Promise<V>;
+	requestMany(ids: readonly K[]): Promise<V[]>;
 }
