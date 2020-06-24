@@ -6,7 +6,6 @@ import type { CustomResolverFunction } from '@lib/types/interfaces';
 import { toss } from '@utils/util';
 import { ChannelType } from '@klasa/dapi-types';
 import { friendlyPermissionNames } from '@utils/constants';
-import { MetadataStorage } from '@utils/MetadataStorage';
 /* eslint-disable @typescript-eslint/ban-types */
 
 // #region Basic
@@ -21,7 +20,6 @@ export function createMethodDecorator(fn: MethodDecorator): MethodDecorator {
 
 export function createFunctionInhibitor(inhibitor: Inhibitor, fallback: Fallback = (): undefined => undefined): MethodDecorator {
 	return createMethodDecorator((target, propertyKey, descriptor): void => {
-		MetadataStorage.functionInhibitors.add(target.constructor, { propertyKey, inhibitor, fallback });
 		const method = descriptor.value;
 		if (!method) throw new Error('Function inhibitors require a [[value]].');
 		if (!isFunction(method)) throw new Error('Function inhibitors can only be applied to functions.');

@@ -46,9 +46,9 @@
     "@klasa/timestamp" "^0.0.1"
     "@klasa/utils" "^0.0.8"
 
-"@klasa/core@dirigeants/core#6badd298d654c7607b41722def06c57bc80c3253":
+"@klasa/core@dirigeants/core#7f41f61341f8486067d5ad478ed45c3db91e44b1":
   version "0.0.3"
-  resolved "https://codeload.github.com/dirigeants/core/tar.gz/6badd298d654c7607b41722def06c57bc80c3253"
+  resolved "https://codeload.github.com/dirigeants/core/tar.gz/7f41f61341f8486067d5ad478ed45c3db91e44b1"
   dependencies:
     "@klasa/bitfield" "^0.0.3"
     "@klasa/cache" "^0.0.3"

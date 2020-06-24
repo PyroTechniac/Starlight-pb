@@ -1,14 +1,16 @@
-import { Finalizer, Command } from 'klasa';
 import type { Message } from '@klasa/core';
+import { Command, Finalizer } from 'klasa';
 
 export default class extends Finalizer {
 
 	public async run(message: Message, command: Command): Promise<void> {
-		const { users } = this.client.typeORM;
+		const { users, clientStorage } = this.client.typeORM;
 
-		const userSettings = await users.acquire(message.author.id);
+		const [userSettings, clientSettings] = await Promise.all([users.acquire(message.author.id), clientStorage.acquire(this.client.user!.id)]);
 		userSettings.command = command.name;
+		clientSettings.command = command.name;
 		await users.save(userSettings);
+		await clientStorage.save(clientSettings);
 	}
 
 }

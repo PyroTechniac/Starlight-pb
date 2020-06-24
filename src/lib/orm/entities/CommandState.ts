@@ -3,21 +3,15 @@ import type { DefaultJSON } from '@lib/types/types';
 
 export class CommandState {
 
-	@Column({ 'nullable': false, 'default': 0 })
-	public count!: number;
+	@Column('integer')
+	public count: number = 0;
 
-	@Column()
-	public last!: string;
+	@Column('varchar', { nullable: true })
+	public last: string | null = null;
 
-	public init(): this {
-		this.count = 0;
-		this.last = '';
-		return this;
-	}
-
-	public update(command: string): void {
+	public set command(name: string) {
 		this.count++;
-		this.last = command;
+		this.last = name;
 	}
 
 	public valueOf(): number {

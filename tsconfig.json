@@ -24,6 +24,9 @@
 			],
 			"@client/*": [
 				"src/lib/client/*"
+			],
+			"@orm/*": [
+				"src/lib/orm/*"
 			]
 		},
 		"importsNotUsedAsValues": "error"

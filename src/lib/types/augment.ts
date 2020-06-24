@@ -1,5 +1,5 @@
 import type { AssetStore } from '@lib/structures/AssetStore';
-import type { TypeORMEngine } from '@lib/structures/TypeORMEngine';
+import type { TypeORMEngine } from '@orm/TypeORMEngine';
 import type { ClientManager } from '@lib/structures/ClientManager';
 import type { ContentDeliveryNetwork } from '@lib/structures/cdn/ContentDeliveryNetwork';
 

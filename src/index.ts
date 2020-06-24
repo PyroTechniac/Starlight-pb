@@ -1,4 +1,3 @@
-import { Intents } from '@klasa/ws';
 import { config } from 'dotenv';
 import 'module-alias/register';
 import 'reflect-metadata';
@@ -7,25 +6,7 @@ import '@lib/extensions/StarlightUser';
 
 config();
 
-const client = new StarlightClient({
-	commands: {
-		prefix: process.env.PREFIX ?? '!',
-		logging: true,
-		editing: true
-	},
-	rest: {
-		offset: 0
-	},
-	ws: {
-		intents: Intents.ALL
-	},
-	consoleEvents: {
-		debug: true
-	},
-	providers: {
-		'default': process.env.PROVIDER ?? 'json'
-	}
-});
+const client = new StarlightClient();
 
 client.token = process.env.DISCORD_TOKEN!;
 

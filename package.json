@@ -9,10 +9,12 @@
 		"start": "node .",
 		"build": "tsc -p .",
 		"lint": "eslint src --ext .ts --fix",
-		"clean": "rimraf dist"
+		"clean": "yarn clean-build && yarn clean-db",
+		"clean-build": "rimraf dist",
+		"clean-db": "rimraf bwd"
 	},
 	"dependencies": {
-		"@klasa/core": "dirigeants/core#6badd298d654c7607b41722def06c57bc80c3253",
+		"@klasa/core": "dirigeants/core#7f41f61341f8486067d5ad478ed45c3db91e44b1",
 		"@klasa/request-handler": "^0.0.3",
 		"abort-controller": "^3.0.0",
 		"dotenv": "^8.2.0",
@@ -35,6 +37,7 @@
 		"typescript": "^3.9.5"
 	},
 	"_moduleAliases": {
+		"@orm": "dist/lib/orm",
 		"@utils": "dist/lib/util",
 		"@lib": "dist/lib",
 		"@root": "dist",

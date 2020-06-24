@@ -1,8 +1,10 @@
 import { AssetStore } from '@lib/structures/AssetStore';
 import { ClientManager } from '@lib/structures/ClientManager';
-import type { TypeORMEngine } from '@lib/structures/TypeORMEngine';
-import { KlasaClient } from 'klasa';
+import type { TypeORMEngine } from '@orm/TypeORMEngine';
+import { KlasaClient, KlasaClientOptions } from 'klasa';
 import type { ContentDeliveryNetwork } from '@lib/structures/cdn/ContentDeliveryNetwork';
+import { mergeDefault } from '@klasa/utils';
+import { STARLIGHT_OPTIONS } from '@utils/constants';
 
 export class StarlightClient extends KlasaClient {
 
@@ -16,6 +18,12 @@ export class StarlightClient extends KlasaClient {
 
 	public get cdn(): ContentDeliveryNetwork {
 		return this.manager.cdn;
+	}
+
+	public constructor(options: Partial<KlasaClientOptions> = {}) {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-expect-error
+		super(mergeDefault(STARLIGHT_OPTIONS, options));
 	}
 
 	public async connect(): Promise<void> {

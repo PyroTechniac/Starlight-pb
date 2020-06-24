@@ -1,5 +1,5 @@
 import { ContentDeliveryNetwork } from '@lib/structures/cdn/ContentDeliveryNetwork';
-import { TypeORMEngine } from '@lib/structures/TypeORMEngine';
+import { TypeORMEngine } from '@orm/TypeORMEngine';
 import type { ClientEngine } from '@lib/types/interfaces';
 import type { KlasaClient } from 'klasa';
 
