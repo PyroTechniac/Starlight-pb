@@ -1,8 +1,10 @@
+import { ClientStorageEntity } from '@orm/entities/ClientStorageEntity';
 import { CommandCounterEntity } from '@orm/entities/CommandCounterEntity';
+import { MemberEntity } from '@orm/entities/MemberEntity';
 import { UserEntity } from '@orm/entities/UserEntity';
-import { Connection, Repository, ConnectionOptions, getConnection, createConnection } from 'typeorm';
-import { join } from 'path';
 import { rootFolder } from '@utils/constants';
+import { join } from 'path';
+import { Connection, ConnectionOptions, createConnection, EntityManager, getConnection, Repository } from 'typeorm';
 
 export class DbManager {
 	#connection: Connection;
@@ -10,16 +12,24 @@ export class DbManager {
 		this.#connection = connection;
 	}
 
-	public get connection(): Connection {
-		return this.#connection;
-	}
-
 	public get users(): Repository<UserEntity> {
-		return this.connection.getRepository(UserEntity);
+		return this.#connection.getRepository(UserEntity);
 	}
 
 	public get commandCounters(): Repository<CommandCounterEntity> {
-		return this.connection.getRepository(CommandCounterEntity);
+		return this.#connection.getRepository(CommandCounterEntity);
+	}
+
+	public get clientStorages(): Repository<ClientStorageEntity> {
+		return this.#connection.getRepository(ClientStorageEntity);
+	}
+
+	public get members(): Repository<MemberEntity> {
+		return this.#connection.getRepository(MemberEntity);
+	}
+
+	public transaction<T>(transactionFn: (manager: EntityManager) => Promise<T>): Promise<T> {
+		return this.#connection.transaction(transactionFn);
 	}
 
 	public static config: ConnectionOptions = {

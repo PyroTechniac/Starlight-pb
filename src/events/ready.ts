@@ -8,7 +8,14 @@ import { DbManager } from "@orm/DbManager";
 })
 export default class extends Event {
 	public async run(): Promise<void> {
-		await DbManager.connect();
-		await Promise.all(this.client.commands.map((__, name): Promise<CommandCounterEntity> => CommandCounterEntity.acquire(name)));
+		const manager = await DbManager.connect();
+		const existing = await manager.commandCounters.find();
+
+		await Promise.all(
+			this.client.commands
+				.filter((command): boolean => !existing.some((entry): boolean => entry.id === command.name))
+				.map((__, name): Promise<CommandCounterEntity> => CommandCounterEntity.acquire(name))
+		);
+		// await Promise.all(this.client.commands.map((__, name): Promise<CommandCounterEntity> => CommandCounterEntity.acquire(name)));
 	}
 }
