@@ -1,5 +1,4 @@
 import type { AssetStore } from '@lib/structures/AssetStore';
-import type { TypeORMEngine } from '@orm/TypeORMEngine';
 import type { ClientManager } from '@lib/structures/ClientManager';
 import type { ContentDeliveryNetwork } from '@lib/structures/cdn/ContentDeliveryNetwork';
 
@@ -7,7 +6,6 @@ declare module '@klasa/core/dist/src/lib/client/Client' {
 	export interface Client {
 		assets: AssetStore;
 		readonly manager: ClientManager;
-		readonly typeORM: TypeORMEngine;
 		readonly cdn: ContentDeliveryNetwork;
 	}
 }
