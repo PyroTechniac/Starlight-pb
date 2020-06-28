@@ -17,6 +17,7 @@
 		"@klasa/core": "dirigeants/core#7f41f61341f8486067d5ad478ed45c3db91e44b1",
 		"@klasa/request-handler": "^0.0.3",
 		"abort-controller": "^3.0.0",
+		"canvas": "^2.6.1",
 		"dotenv": "^8.2.0",
 		"klasa": "dirigeants/klasa#c1829a58ed96729601ceee159ec95992fbf8b55b",
 		"module-alias": "^2.2.2",
