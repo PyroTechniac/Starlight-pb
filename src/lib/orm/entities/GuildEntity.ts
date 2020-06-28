@@ -1,5 +1,7 @@
 import { BaseEntity, Entity, Column, Index } from "typeorm";
 import { RequestHandler } from "@klasa/request-handler";
+import  { Guild, Role, GuildMember, Message } from "@klasa/core";
+import { toss } from "@utils/util";
 
 @Index('guild_pkey', ['id'], { unique: true })
 @Entity('guild', { schema: 'public' })
@@ -15,7 +17,8 @@ export class GuildEntity extends BaseEntity {
 		GuildEntity.createMany.bind(GuildEntity)
 	)
 
-	public static async acquire(id: string) {
+	public static async acquire(raw: Role | GuildMember | Message | Guild | string) {
+		const id = this.resolveToID(raw);
 		try {
 			return await this.findOneOrFail({ id });
 		} catch {
@@ -40,4 +43,13 @@ export class GuildEntity extends BaseEntity {
 			return manager.save(entities);
 		})
 	}
+
+	private static resolveToID(resolvable: Role | GuildMember | Message | Guild | string): string {
+		// return typeof resolvable === 'string' ? resolvable : resolvable.id;
+		if (resolvable instanceof Role || resolvable instanceof GuildMember) return resolvable.guild.id;
+		if (resolvable instanceof Message) return resolvable.guild?.id ?? toss(new Error('Cannot acquire GuildEntity from a DM message'));
+		if (resolvable instanceof Guild) return resolvable.id;
+		return resolvable;
+	}
+
 }

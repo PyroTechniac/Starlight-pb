@@ -14,8 +14,7 @@ export default class extends Event {
 		await Promise.all(
 			this.client.commands
 				.filter((command): boolean => !existing.some((entry): boolean => entry.id === command.name))
-				.map((__, name): Promise<CommandCounterEntity> => CommandCounterEntity.acquire(name))
+				.map(CommandCounterEntity.acquire.bind(CommandCounterEntity))
 		);
-		// await Promise.all(this.client.commands.map((__, name): Promise<CommandCounterEntity> => CommandCounterEntity.acquire(name)));
 	}
 }

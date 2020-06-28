@@ -1,5 +1,7 @@
 import { BaseEntity, Entity, Column, Index } from "typeorm";
 import { RequestHandler } from "@klasa/request-handler";
+import { GuildMember, Message } from "@klasa/core";
+import { toss } from "@utils/util";
 
 @Index('member_guild_user_idx', ['guildID', 'userID'], { unique: true })
 @Entity('member', { schema: 'public' })
@@ -28,7 +30,8 @@ export class MemberEntity extends BaseEntity {
 		MemberEntity.createMany.bind(MemberEntity)
 	)
 
-	public static async acquire(guildID: string, userID: string): Promise<MemberEntity> {
+	public static async acquire(guildIDOrMember: GuildMember | Message | string, rawUserID?: string): Promise<MemberEntity> {
+		const [guildID, userID] = this.resolveToID(guildIDOrMember, rawUserID);
 		try {
 			return await this.findOneOrFail({ guildID, userID });
 		} catch {
@@ -53,5 +56,18 @@ export class MemberEntity extends BaseEntity {
 
 			return manager.save(entities);
 		})
+	}
+
+	private static resolveToID(resolvable: GuildMember | Message | string, userID?: string): [string, string] {
+		if (typeof resolvable === 'string') {
+			if (typeof userID === 'string') return [resolvable, userID];
+			return resolvable.split('.', 2) as [string, string];
+		}
+		return [
+			resolvable.guild?.id ?? toss(new Error('Cannot get MemberEntity in a DM message')),
+			resolvable instanceof Message
+				? resolvable.author.id
+				: resolvable.user?.id ?? toss(new Error('Cannot get MemberEntity of uncached User'))
+		];
 	}
 }

@@ -11,11 +11,10 @@ import { CommandCounterEntity } from '@orm/entities/CommandCounterEntity';
 export default class extends Finalizer {
 	public async run(message: Message, command: Command): Promise<void> {
 		const connection = await DbManager.connect();
-		// await connection.commandCounters.increment({ id: command.name }, 'uses', 1);
 		await connection.transaction(async (manager): Promise<void> => {
-			const clientSettings = await ClientStorageEntity.acquire(this.client.user!.id);
-			const userSettings = await UserEntity.acquire(message.author.id);
-			const commandCounter = await CommandCounterEntity.acquire(command.name);
+			const clientSettings = await ClientStorageEntity.acquire(this.client);
+			const userSettings = await UserEntity.acquire(message);
+			const commandCounter = await CommandCounterEntity.acquire(command);
 			let guildSettings: null | GuildEntity = null;
 			let memberSettings: null | MemberEntity = null;
 			if (message.guild) [guildSettings, memberSettings] = await this.acquireGuildAndMember(message);
@@ -34,6 +33,6 @@ export default class extends Finalizer {
 
 	private async acquireGuildAndMember(message: Message): Promise<[GuildEntity, MemberEntity]> {
 		if (!message.member) await message.guild!.members.fetch(message.author.id);
-		return Promise.all([GuildEntity.acquire(message.guild!.id), MemberEntity.acquire(message.guild!.id, message.author.id)]) as Promise<[GuildEntity, MemberEntity]>;
+		return Promise.all([GuildEntity.acquire(message), MemberEntity.acquire(message)]) as Promise<[GuildEntity, MemberEntity]>;
 	}
 }

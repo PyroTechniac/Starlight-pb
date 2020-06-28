@@ -1,5 +1,6 @@
 import { Entity, BaseEntity, Column, Index } from 'typeorm';
 import { RequestHandler } from '@klasa/request-handler';
+import type { Command } from 'klasa';
 
 @Index('command_counter_pkey', ['id'], { unique: true })
 @Entity('command_counter', { schema: 'public' })
@@ -20,7 +21,8 @@ export class CommandCounterEntity extends BaseEntity {
 		CommandCounterEntity.createMany.bind(CommandCounterEntity)
 	);
 
-	public static async acquire(id: string): Promise<CommandCounterEntity> {
+	public static async acquire(raw: Command | string): Promise<CommandCounterEntity> {
+		const id = this.resolveToID(raw);
 		try {
 			return await this.findOneOrFail({ id });
 		} catch {
@@ -44,5 +46,9 @@ export class CommandCounterEntity extends BaseEntity {
 			}
 			return manager.save(entities);
 		})
+	}
+
+	private static resolveToID(resolvable: Command | string): string {
+		return typeof resolvable === 'string' ? resolvable : resolvable.name;
 	}
 }
