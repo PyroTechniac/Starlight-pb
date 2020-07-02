@@ -16,7 +16,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/PyroTechniac"><img src="https://avatars2.githubusercontent.com/u/39341355?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Gryffon Bellish</b></sub></a><br /><a href="https://github.com/PyroTechniac/Starlight-pb/commits?author=PyroTechniac" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/PyroTechniac"><img src="https://avatars2.githubusercontent.com/u/39341355?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Gryffon Bellish</b></sub></a><br /><a href="https://github.com/PyroTechniac/Starlight-pb/commits?author=PyroTechniac" title="Code">💻</a> <a href="https://github.com/PyroTechniac/Starlight-pb/commits?author=PyroTechniac" title="Tests">⚠️</a></td>
   </tr>
 </table>
 
