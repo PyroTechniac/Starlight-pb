@@ -14,12 +14,11 @@
 		"clean-db": "rimraf bwd"
 	},
 	"dependencies": {
-		"@klasa/core": "dirigeants/core#7f41f61341f8486067d5ad478ed45c3db91e44b1",
+		"@klasa/core": "dirigeants/core#ff452f43a236004ef21868c0d925c8dd639ebfad",
 		"@klasa/request-handler": "^0.0.3",
 		"abort-controller": "^3.0.0",
-		"canvas": "^2.6.1",
 		"dotenv": "^8.2.0",
-		"klasa": "dirigeants/klasa#c1829a58ed96729601ceee159ec95992fbf8b55b",
+		"klasa": "dirigeants/klasa#8b74c86d760fe90d7fcb0cae87cc3ad93d094cb6",
 		"module-alias": "^2.2.2",
 		"reflect-metadata": "^0.1.13",
 		"sqlite3": "^4.2.0",
@@ -32,6 +31,7 @@
 		"@types/node-fetch": "^2.5.7",
 		"@typescript-eslint/eslint-plugin": "^3.1.0",
 		"@typescript-eslint/parser": "^3.1.0",
+		"all-contributors-cli": "^6.16.1",
 		"eslint": "^7.1.0",
 		"eslint-config-bamboo": "^5.0.0",
 		"rimraf": "^3.0.2",
@@ -43,5 +43,8 @@
 		"@lib": "dist/lib",
 		"@root": "dist",
 		"@client": "dist/lib/client"
+	},
+	"engines": {
+		"node": ">=14"
 	}
 }

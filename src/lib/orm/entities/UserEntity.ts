@@ -3,9 +3,11 @@ import { RequestHandler } from '@klasa/request-handler';
 import { User, Message, GuildMember } from '@klasa/core';
 import { toss } from '@utils/util';
 
-@Index('user_pkey', ['id'], { unique: true })
+export type UserEntityResolvable = User | Message | GuildMember | string;
+
 @Entity('user', { schema: 'public' })
 export class UserEntity extends BaseEntity {
+	@Index('user_idx', { unique: true })
 	@Column('varchar', { primary: true, length: 19 })
 	public id: string = null!;
 
@@ -17,7 +19,7 @@ export class UserEntity extends BaseEntity {
 		UserEntity.createMany.bind(UserEntity)
 	);
 
-	public static async acquire(raw: Message | GuildMember | User | string): Promise<UserEntity> {
+	public static async acquire(raw: UserEntityResolvable): Promise<UserEntity> {
 		const id = this.resolveToID(raw);
 		try {
 			return await this.findOneOrFail({ id });
@@ -45,8 +47,7 @@ export class UserEntity extends BaseEntity {
 		})
 	}
 
-	private static resolveToID(resolvable: Message | GuildMember | User | string): string {
-		// return typeof resolvable === 'string' ? resolvable : resolvable.id;
+	private static resolveToID(resolvable: UserEntityResolvable): string {
 		if (resolvable instanceof Message) return resolvable.author.id;
 		if (resolvable instanceof GuildMember) return resolvable.user?.id ?? toss(new Error('User is not cached from GuildMember instance'));
 		if (resolvable instanceof User) return resolvable.id;

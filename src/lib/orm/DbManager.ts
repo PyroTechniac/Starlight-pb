@@ -1,10 +1,21 @@
 import { ClientStorageEntity } from '@orm/entities/ClientStorageEntity';
 import { CommandCounterEntity } from '@orm/entities/CommandCounterEntity';
+import { GuildEntity } from '@orm/entities/GuildEntity';
 import { MemberEntity } from '@orm/entities/MemberEntity';
 import { UserEntity } from '@orm/entities/UserEntity';
 import { rootFolder } from '@utils/constants';
 import { join } from 'path';
-import { Connection, ConnectionOptions, createConnection, EntityManager, getConnection, Repository } from 'typeorm';
+import {
+	Connection,
+	ConnectionOptions,
+	createConnection,
+	EntityManager,
+	getConnection,
+	Repository,
+	Transaction,
+	TransactionManager,
+	BaseEntity
+} from 'typeorm';
 
 export class DbManager {
 	#connection: Connection;
@@ -28,8 +39,22 @@ export class DbManager {
 		return this.#connection.getRepository(MemberEntity);
 	}
 
+	public get guilds(): Repository<GuildEntity> {
+		return this.#connection.getRepository(GuildEntity)
+	}
+
 	public transaction<T>(transactionFn: (manager: EntityManager) => Promise<T>): Promise<T> {
 		return this.#connection.transaction(transactionFn);
+	}
+
+	@Transaction()
+	public async save(entities: BaseEntity[], @TransactionManager() entityManager?: EntityManager): Promise<void> {
+		if (typeof entityManager === 'undefined') throw new Error('Unreachable.');
+		await entityManager.save(entities);
+	}
+
+	public async destroy(): Promise<void> {
+		await this.#connection.close();
 	}
 
 	public static config: ConnectionOptions = {

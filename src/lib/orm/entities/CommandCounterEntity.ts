@@ -2,9 +2,11 @@ import { Entity, BaseEntity, Column, Index } from 'typeorm';
 import { RequestHandler } from '@klasa/request-handler';
 import type { Command } from 'klasa';
 
-@Index('command_counter_pkey', ['id'], { unique: true })
+export type CommandEntityResolvable = string | Command;
+
 @Entity('command_counter', { schema: 'public' })
 export class CommandCounterEntity extends BaseEntity {
+	@Index('command_counter_pkey', { unique: true })
 	@Column('varchar', { primary: true, length: 32 })
 	public id: string = null!;
 
@@ -21,7 +23,7 @@ export class CommandCounterEntity extends BaseEntity {
 		CommandCounterEntity.createMany.bind(CommandCounterEntity)
 	);
 
-	public static async acquire(raw: Command | string): Promise<CommandCounterEntity> {
+	public static async acquire(raw: CommandEntityResolvable): Promise<CommandCounterEntity> {
 		const id = this.resolveToID(raw);
 		try {
 			return await this.findOneOrFail({ id });
@@ -48,7 +50,7 @@ export class CommandCounterEntity extends BaseEntity {
 		})
 	}
 
-	private static resolveToID(resolvable: Command | string): string {
+	private static resolveToID(resolvable: CommandEntityResolvable): string {
 		return typeof resolvable === 'string' ? resolvable : resolvable.name;
 	}
 }

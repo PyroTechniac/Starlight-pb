@@ -1,14 +1,23 @@
-import { Constructor, Message, Piece, PieceConstructor, PieceOptions, Store, PermissionsResolvable, Permissions, PermissionsFlags, GuildTextBasedChannel } from '@klasa/core';
-import { isFunction } from '@klasa/utils';
-import { Extendable as KlasaExtendable, ExtendableOptions, ExtendableStore, ScheduledTask, ScheduledTaskOptions, Task, Command, CommandStore, CommandOptions, KlasaClient } from 'klasa';
-import { StarlightEvents } from '@lib/types/enums';
-import type { CustomResolverFunction } from '@lib/types/interfaces';
-import { toss } from '@utils/util';
+import { GuildTextBasedChannel, Message, Permissions, PermissionsFlags, PermissionsResolvable, Piece, PieceConstructor, PieceOptions } from '@klasa/core';
 import { ChannelType } from '@klasa/dapi-types';
+import { isFunction } from '@klasa/utils';
+import type { CustomResolverFunction } from '@lib/types/interfaces';
 import { friendlyPermissionNames } from '@utils/constants';
+import { toss } from '@utils/util';
+import type { Command, KlasaClient } from 'klasa';
 /* eslint-disable @typescript-eslint/ban-types */
 
 // #region Basic
+
+export function createProxy<T extends object>(target: T, handler: Omit<ProxyHandler<T>, 'get'>): T {
+	return new Proxy(target, {
+		get: (target, prop): unknown => {
+			const value = Reflect.get(target, prop);
+			return typeof value === 'function' ? (...args: readonly unknown[]) => value.apply(target, args) : value;
+		},
+		...handler
+	})
+}
 
 export function createClassDecorator(fn: Function): Function {
 	return fn;
@@ -35,18 +44,14 @@ export function createFunctionInhibitor(inhibitor: Inhibitor, fallback: Fallback
 
 // #region Pieces
 
-export function mergeOptions<T extends PieceOptions>(options: T): Function;
-// eslint-disable-next-line @typescript-eslint/unified-signatures
-export function mergeOptions<T extends PieceOptions>(optionsFn: (client: KlasaClient) => T): Function;
 export function mergeOptions<T extends PieceOptions>(optionsOrFunction: T | ((client: KlasaClient) => T)): Function {
-	return createClassDecorator((target: PieceConstructor<Piece>): PieceConstructor<Piece> => class extends target {
-
-		public constructor(store: Store<Piece>, directory: string, files: readonly string[], baseOptions: PieceOptions = {}) {
-			const options = isFunction(optionsOrFunction) ? optionsOrFunction(store.client as KlasaClient) : optionsOrFunction;
-			super(store, directory, files, { ...baseOptions, ...options });
-		}
-
-	});
+	return createClassDecorator((target: PieceConstructor<Piece>): PieceConstructor<Piece> => createProxy(target, {
+		construct: (ctor, [store, directory, file, baseOptions = {}]): Piece => new ctor(store, directory, file, {
+			...baseOptions, ...(typeof optionsOrFunction === 'function'
+				? optionsOrFunction(store.client)
+				: optionsOrFunction)
+		})
+	}));
 }
 
 // #endregion Pieces
@@ -54,20 +59,31 @@ export function mergeOptions<T extends PieceOptions>(optionsOrFunction: T | ((cl
 // #region Commands
 
 export function createResolvers(resolvers: [string, CustomResolverFunction][]): Function {
-
-	return createClassDecorator((target: PieceConstructor<Command>): PieceConstructor<Command> => class extends target {
-
-		public constructor(store: CommandStore, directory: string, files: readonly string[], options: CommandOptions) {
-			super(store, directory, files, options);
-
-			for (const resolver of resolvers) this.createCustomResolver(...resolver);
+	return createClassDecorator((target: PieceConstructor<Command>): PieceConstructor<Command> => createProxy(target, {
+		construct: (ctor, [store, directory, files, options]): Command => {
+			const command = new ctor(store, directory, files, options);
+			for (const resolver of resolvers) command.createCustomResolver(...resolver);
+			return command;
 		}
-
-	} as unknown as PieceConstructor<Command>);
+	}))
 }
 
 export function createResolver(...args: [string, CustomResolverFunction]): Function {
 	return createResolvers([args]);
+}
+
+export function customizeResponses(responses: [string, string | ((message: Message) => string)][]): Function {
+	return createClassDecorator((target: PieceConstructor<Command>): PieceConstructor<Command> => createProxy(target, {
+		construct: (ctor, [store, directory, files, options]): Command => {
+			const command = new ctor(store, directory, files, options);
+			for (const response of responses) command.customizeResponse(...response);
+			return command;
+		}
+	}));
+}
+
+export function customizeResponse(...args: [string, string | ((message: Message) => string)]): Function {
+	return customizeResponses([args]);
 }
 
 // eslint-disable-next-line max-statements-per-line
@@ -97,40 +113,6 @@ export function requiredPermissions(permissionsResolvable: PermissionsResolvable
 
 // #endregion Commands
 
-// #region Tasks
-
-// Here because TS doesn't like you extending abstract classes in decorators without implementing them
-// And because you can't make a class returned by a decorator abstract
-interface NonAbstractTask extends Task {
-	run(data?: any): Promise<void>;
-}
-
-const kScheduled = Symbol('ScheduledTask');
-
-export function ensureTask(time: string | number | Date, data?: ScheduledTaskOptions): Function {
-	return createClassDecorator((target: PieceConstructor<NonAbstractTask>): PieceConstructor<NonAbstractTask> => class extends target {
-
-		private get [kScheduled](): ScheduledTask | undefined {
-			return this.client.schedule.tasks.find((st): boolean => st.taskName === this.name && st.task === this);
-		}
-
-		public async init(): Promise<void> {
-			await super.init();
-
-			const found = this[kScheduled];
-			if (typeof found === 'undefined') {
-				const created = await this.client.schedule.create(this.name, time, data);
-				this.client.emit(StarlightEvents.TaskCreated, created!);
-			} else {
-				this.client.emit(StarlightEvents.TaskFound, found);
-			}
-		}
-
-	});
-}
-
-// #endregion Tasks
-
 // #region Interfaces
 
 export interface Inhibitor {
@@ -142,18 +124,3 @@ export interface Fallback {
 }
 
 // #endregion Interfaces
-
-// #region Misc
-
-// Not a Decorator, but a function that returns a class, so it's close enough.
-export function Extendable(...appliesTo: any[]): Constructor<KlasaExtendable> { // eslint-disable-line @typescript-eslint/naming-convention
-	return class extends KlasaExtendable {
-
-		public constructor(store: ExtendableStore, directory: string, files: readonly string[], options: ExtendableOptions = {}) {
-			super(store, directory, files, { ...options, appliesTo });
-		}
-
-	} as unknown as Constructor<KlasaExtendable>;
-}
-
-// #endregion Misc

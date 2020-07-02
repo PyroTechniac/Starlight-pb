@@ -20,10 +20,16 @@ export class StarlightClient extends KlasaClient {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-expect-error
 		super(mergeDefault(STARLIGHT_OPTIONS, options));
+		this.loadPlugins();
 	}
 
 	public async connect(): Promise<void> {
-		if (this['pluginLoadedCount'] !== KlasaClient['plugins'].size) this.loadPlugins(); // eslint-disable-line @typescript-eslint/no-unsafe-member-access
-		await Promise.all([DbManager.connect(), super.connect()]);
+		await DbManager.connect();
+		await super.connect();
+	}
+
+	public async destroy(): Promise<void> {
+		const connection = await DbManager.connect();
+		await Promise.all([connection.destroy(), super.destroy()]);
 	}
 }

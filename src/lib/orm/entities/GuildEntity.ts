@@ -1,23 +1,31 @@
 import { BaseEntity, Entity, Column, Index } from "typeorm";
 import { RequestHandler } from "@klasa/request-handler";
-import  { Guild, Role, GuildMember, Message } from "@klasa/core";
+import { Guild, Role, GuildMember, Message } from "@klasa/core";
 import { toss } from "@utils/util";
 
-@Index('guild_pkey', ['id'], { unique: true })
+export type GuildEntityResolvable = Guild | Role | GuildMember | Message | string;
+
 @Entity('guild', { schema: 'public' })
 export class GuildEntity extends BaseEntity {
+	@Index('guild_pkey', { unique: true })
 	@Column('varchar', { primary: true, length: 19 })
 	public id: string = null!;
 
 	@Column('int')
 	public commandUses = 0;
 
+	@Column('simple-array')
+	public userBlacklist: string[] = [];
+
+	@Column('simple-array')
+	public guildBlacklist: string[] = [];
+
 	private static createHandler = new RequestHandler(
 		GuildEntity.createOne.bind(GuildEntity),
 		GuildEntity.createMany.bind(GuildEntity)
 	)
 
-	public static async acquire(raw: Role | GuildMember | Message | Guild | string) {
+	public static async acquire(raw: GuildEntityResolvable) {
 		const id = this.resolveToID(raw);
 		try {
 			return await this.findOneOrFail({ id });
@@ -44,8 +52,7 @@ export class GuildEntity extends BaseEntity {
 		})
 	}
 
-	private static resolveToID(resolvable: Role | GuildMember | Message | Guild | string): string {
-		// return typeof resolvable === 'string' ? resolvable : resolvable.id;
+	private static resolveToID(resolvable: GuildEntityResolvable): string {
 		if (resolvable instanceof Role || resolvable instanceof GuildMember) return resolvable.guild.id;
 		if (resolvable instanceof Message) return resolvable.guild?.id ?? toss(new Error('Cannot acquire GuildEntity from a DM message'));
 		if (resolvable instanceof Guild) return resolvable.id;
