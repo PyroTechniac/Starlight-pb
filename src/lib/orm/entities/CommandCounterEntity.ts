@@ -6,6 +6,7 @@ export type CommandEntityResolvable = string | Command;
 
 @Entity('command_counter', { schema: 'public' })
 export class CommandCounterEntity extends BaseEntity {
+
 	@Index('command_counter_pkey', { unique: true })
 	@Column('varchar', { primary: true, length: 32 })
 	public id: string = null!;
@@ -47,10 +48,11 @@ export class CommandCounterEntity extends BaseEntity {
 				entities.push(entity);
 			}
 			return manager.save(entities);
-		})
+		});
 	}
 
 	private static resolveToID(resolvable: CommandEntityResolvable): string {
 		return typeof resolvable === 'string' ? resolvable : resolvable.name;
 	}
+
 }

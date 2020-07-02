@@ -1,12 +1,13 @@
-import type { Client } from "@klasa/core";
-import type { ClientManager } from "@lib/structures/ClientManager";
-import type { ClientEngine } from "@lib/types/interfaces";
-import { MasterPayload, WorkerOpCodes, WorkerTypes, WorkerPayload } from "@lib/types/workers";
+import type { Client } from '@klasa/core';
+import type { ClientManager } from '@lib/structures/ClientManager';
+import type { ClientEngine } from '@lib/types/interfaces';
+import { MasterPayload, WorkerOpCodes, WorkerTypes, WorkerPayload } from '@lib/types/workers';
 import { join } from 'path';
-import { Worker } from "worker_threads";
+import { Worker } from 'worker_threads';
 
 export class WorkerManager implements ClientEngine {
-	#destroyed = false;
+
+	#destroyed = false; // eslint-disable-line @typescript-eslint/explicit-member-accessibility
 
 	public constructor(public readonly manager: ClientManager) { }
 
@@ -26,6 +27,7 @@ export class WorkerManager implements ClientEngine {
 		return worker;
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public sendToWorker(type: WorkerTypes, message: WorkerPayload): void {
 		throw new Error('Unimplemented.');
 	}
@@ -35,6 +37,9 @@ export class WorkerManager implements ClientEngine {
 		switch (payload.event) {
 			case WorkerOpCodes.Ready:
 				this.client.console.log(`[${normalized}] :: Ready`);
+				break;
+			case WorkerOpCodes.Heartbeat:
+				this.client.console.log(`[${normalized}] :: Heartbeat received`);
 				break;
 		}
 	}
@@ -46,4 +51,5 @@ export class WorkerManager implements ClientEngine {
 			default: return 'Unknown Worker';
 		}
 	}
+
 }

@@ -1,12 +1,13 @@
-import { BaseEntity, Entity, Index, Column } from "typeorm"
-import { Client, Structure, Piece } from "@klasa/core";
-import { toss } from "@utils/util";
-import { RebootState } from "@orm/entities/RebootState";
+import { BaseEntity, Entity, Index, Column } from 'typeorm';
+import { Client, Structure, Piece } from '@klasa/core';
+import { toss } from '@utils/util';
+import { RebootState } from '@orm/entities/RebootState';
 
 export type ClientEntityResolvable = string | Client | Structure<Client> | Piece;
 
 @Entity('client', { schema: 'public' })
 export class ClientEntity extends BaseEntity {
+
 	@Index('client_storage_pkey', { unique: true })
 	@Column('varchar', { primary: true, length: 19 })
 	public id: string = null!;
@@ -33,4 +34,5 @@ export class ClientEntity extends BaseEntity {
 		if (resolvable instanceof Structure || resolvable instanceof Piece) return this.resolveToID(resolvable.client);
 		return typeof resolvable === 'string' ? resolvable : resolvable.user?.id ?? toss(new Error('Cannot acquire ClientEntity from non-ready Client'));
 	}
+
 }

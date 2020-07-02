@@ -18,7 +18,8 @@ import {
 } from 'typeorm';
 
 export class DbManager {
-	#connection: Connection;
+
+	#connection: Connection; // eslint-disable-line @typescript-eslint/explicit-member-accessibility
 	private constructor(connection: Connection) {
 		this.#connection = connection;
 	}
@@ -40,7 +41,7 @@ export class DbManager {
 	}
 
 	public get guilds(): Repository<GuildEntity> {
-		return this.#connection.getRepository(GuildEntity)
+		return this.#connection.getRepository(GuildEntity);
 	}
 
 	public transaction<T>(transactionFn: (manager: EntityManager) => Promise<T>): Promise<T> {
@@ -66,7 +67,7 @@ export class DbManager {
 		synchronize: process.env.NODE_ENV !== 'production',
 		logging: process.env.NODE_ENV !== 'production',
 		namingStrategy: new CamelNamingStrategy()
-	}
+	};
 
 	public static async connect(): Promise<DbManager> {
 		try {
@@ -75,4 +76,5 @@ export class DbManager {
 			return new DbManager(await createConnection(this.config));
 		}
 	}
+
 }

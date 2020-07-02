@@ -9,6 +9,7 @@ import type { BaseEntity } from 'typeorm';
 import { CommandCounterEntity } from '@orm/entities/CommandCounterEntity';
 
 export default class extends Finalizer {
+
 	public async run(message: Message, command: Command): Promise<void> {
 		const connection = await DbManager.connect();
 		const clientSettings = await ClientEntity.acquire(this);
@@ -31,7 +32,7 @@ export default class extends Finalizer {
 
 	private async acquireGuildAndMember(message: Message): Promise<[GuildEntity, MemberEntity]> {
 		if (!message.member) await message.guild!.members.fetch(message.author.id);
-		return Promise.all([GuildEntity.acquire(message), MemberEntity.acquire(message)]) as Promise<[GuildEntity, MemberEntity]>;
+		return Promise.all([GuildEntity.acquire(message), MemberEntity.acquire(message)]);
 	}
 
 }

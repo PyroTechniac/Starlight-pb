@@ -4,7 +4,8 @@ import { TimerManager } from '@klasa/timer-manager';
 import { EventIterator } from '@klasa/event-iterator';
 
 class DataHandler {
-	#timer: NodeJS.Timeout | null = null;
+
+	#timer: NodeJS.Timeout | null = null; // eslint-disable-line @typescript-eslint/explicit-member-accessibility
 
 	private constructor() {
 		this.checkParentPort(parentPort);
@@ -18,7 +19,7 @@ class DataHandler {
 		return process.exit(code);
 	}
 
-	private async init() {
+	private async init(): Promise<void> {
 		this.sendToMaster({ event: WorkerOpCodes.Ready });
 		this.#timer = TimerManager.setInterval((): void => {
 			this.sendToMaster({ event: WorkerOpCodes.Heartbeat });
@@ -28,6 +29,7 @@ class DataHandler {
 		}
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
 	private handleMessage(data: WorkerPayload): void { }
 
 	private sendToMaster(message: MasterPayload): void {
@@ -48,9 +50,10 @@ class DataHandler {
 	public static destroy(): void {
 		this.instance?.destroy();
 	}
+
 }
 
 DataHandler.main()
 	.catch((): void => {
 		DataHandler.destroy();
-	})
+	});

@@ -2,6 +2,7 @@ import { Column } from 'typeorm';
 import type { Message } from '@klasa/core';
 
 export class RebootState {
+
 	@Column('varchar', { length: 19, nullable: true })
 	public messageID: string | null = null;
 
@@ -13,4 +14,5 @@ export class RebootState {
 		this.messageID = message.id;
 		return this;
 	}
+
 }

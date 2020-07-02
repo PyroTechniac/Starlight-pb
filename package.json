@@ -10,7 +10,7 @@
 		"build": "tsc -p .",
 		"rebuild": "yarn clean-build && yarn build",
 		"rebuild-all": "yarn clean && yarn build",
-		"lint": "eslint src --ext .ts --fix",
+		"lint": "eslint src --fix --ext .ts",
 		"clean": "yarn clean-build && yarn clean-db",
 		"clean-build": "rimraf dist",
 		"clean-db": "rimraf bwd"

@@ -13,10 +13,10 @@ export function createProxy<T extends object>(target: T, handler: Omit<ProxyHand
 	return new Proxy(target, {
 		get: (target, prop): unknown => {
 			const value = Reflect.get(target, prop);
-			return typeof value === 'function' ? (...args: readonly unknown[]) => value.apply(target, args) : value;
+			return typeof value === 'function' ? (...args: readonly unknown[]): unknown => value.apply(target, args) : value;
 		},
 		...handler
-	})
+	});
 }
 
 export function createClassDecorator(fn: Function): Function {
@@ -65,7 +65,7 @@ export function createResolvers(resolvers: [string, CustomResolverFunction][]): 
 			for (const resolver of resolvers) command.createCustomResolver(...resolver);
 			return command;
 		}
-	}))
+	}));
 }
 
 export function createResolver(...args: [string, CustomResolverFunction]): Function {

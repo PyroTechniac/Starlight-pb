@@ -9,6 +9,7 @@ import { ClientEntity } from '@orm/entities/ClientEntity';
 	description: (lang): string => lang.get('COMMAND_REBOOT_DESCRIPTION')
 })
 export default class extends Command {
+
 	public async run(message: Message): Promise<Message[]> {
 		const [msg] = await message.replyLocale('COMMAND_REBOOT').catch((): Message[] => []);
 		if (typeof msg !== 'undefined') await this.handleMessage(message);
@@ -22,4 +23,5 @@ export default class extends Command {
 		settings.rebootState.setMessage(message);
 		await settings.save();
 	}
+
 }

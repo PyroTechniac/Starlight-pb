@@ -12,7 +12,7 @@ export interface BasePayload {
 	data?: unknown;
 }
 
-export type MasterPayload = ReadyPayload | HeartbeatPayload
+export type MasterPayload = ReadyPayload | HeartbeatPayload;
 
 export interface ReadyPayload extends BasePayload {
 	event: WorkerOpCodes.Ready;
@@ -24,7 +24,7 @@ export interface HeartbeatPayload extends BasePayload {
 }
 
 export interface LogPayload extends BasePayload {
-	event: WorkerOpCodes.Log,
+	event: WorkerOpCodes.Log;
 	data: any;
 }
 

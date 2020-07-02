@@ -32,4 +32,5 @@ export class StarlightClient extends KlasaClient {
 		const connection = await DbManager.connect();
 		await Promise.all([connection.destroy(), super.destroy()]);
 	}
+
 }

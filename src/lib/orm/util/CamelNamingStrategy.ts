@@ -2,6 +2,7 @@ import { DefaultNamingStrategy, NamingStrategyInterface } from 'typeorm';
 import { camelCase } from '@orm/util/utils';
 
 export class CamelNamingStrategy extends DefaultNamingStrategy implements NamingStrategyInterface {
+
 	public tableName(className: string, customName: string): string {
 		return customName ? customName : camelCase(className);
 	}
@@ -18,7 +19,7 @@ export class CamelNamingStrategy extends DefaultNamingStrategy implements Naming
 		return camelCase(`${relationName} ${referencedColumn}`);
 	}
 
-	public joinTableName(firstTableName: string, secondTableName: string, firstPropertyName: string, secondPropertyName: string): string {
+	public joinTableName(firstTableName: string, secondTableName: string, firstPropertyName: string): string {
 		return camelCase(`${firstTableName} ${firstPropertyName.replace(/\./gi, ' ')} ${secondTableName}`);
 	}
 
@@ -33,4 +34,5 @@ export class CamelNamingStrategy extends DefaultNamingStrategy implements Naming
 	public eagerJoinRelationAlias(alias: string, propertyPath: string): string {
 		return `${alias}  ${propertyPath.replace('.', ' ')}`;
 	}
+
 }

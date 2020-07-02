@@ -1,13 +1,14 @@
-import { Event, EventOptions } from "@klasa/core";
+import { Event, EventOptions } from '@klasa/core';
 import { CommandCounterEntity } from '@orm/entities/CommandCounterEntity';
-import { mergeOptions } from "@utils/decorators";
-import { DbManager } from "@orm/DbManager";
-import { GuildEntity } from "@orm/entities/GuildEntity";
+import { mergeOptions } from '@utils/decorators';
+import { DbManager } from '@orm/DbManager';
+import { GuildEntity } from '@orm/entities/GuildEntity';
 
 @mergeOptions<EventOptions>({
 	once: true
 })
 export default class extends Event {
+
 	private entities = new Map<'guilds' | 'commands', (GuildEntity | CommandCounterEntity)[]>();
 
 	public async run(): Promise<void> {

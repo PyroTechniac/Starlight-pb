@@ -2,6 +2,7 @@ import { snakeCase } from '@orm/util/utils';
 import { DefaultNamingStrategy, NamingStrategyInterface } from 'typeorm';
 
 export class SnakeNamingStrategy extends DefaultNamingStrategy implements NamingStrategyInterface {
+
 	public tableName(className: string, customName: string): string {
 		return customName ? customName : snakeCase(className);
 	}
@@ -18,8 +19,8 @@ export class SnakeNamingStrategy extends DefaultNamingStrategy implements Naming
 		return snakeCase(`${relationName}_${referencedColumn}`);
 	}
 
-	public joinTableName(firstTableName: string, secondTableName: string, firstPropertyName: string, secondPropertyName: string): string {
-		return snakeCase(`${firstTableName}_${firstPropertyName.replace(/\./gi, '_')}_${secondTableName}`)
+	public joinTableName(firstTableName: string, secondTableName: string, firstPropertyName: string): string {
+		return snakeCase(`${firstTableName}_${firstPropertyName.replace(/\./gi, '_')}_${secondTableName}`);
 	}
 
 	public joinTableColumnName(tableName: string, propertyName: string, columnName?: string): string {
@@ -33,4 +34,5 @@ export class SnakeNamingStrategy extends DefaultNamingStrategy implements Naming
 	public eagerJoinRelationAlias(alias: string, propertyPath: string): string {
 		return `${alias}__${propertyPath.replace('.', '_')}`;
 	}
+
 }

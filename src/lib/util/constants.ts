@@ -10,7 +10,7 @@ config();
 const {
 	PREFIX: prefix,
 	PROVIDER: defaultProvider
-} = process.env
+} = process.env;
 
 export const rootFolder = join(__dirname, '..', '..', '..');
 
@@ -40,4 +40,4 @@ export const STARLIGHT_OPTIONS: KlasaClientOptions = {
 		'default': defaultProvider ?? 'json',
 		'json': { baseDirectory: baseDirectory('json') }
 	}
-}
+};

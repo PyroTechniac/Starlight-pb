@@ -1,12 +1,13 @@
-import { BaseEntity, Entity, Column, Index } from "typeorm";
-import { RequestHandler } from "@klasa/request-handler";
-import { Guild, Role, GuildMember, Message } from "@klasa/core";
-import { toss } from "@utils/util";
+import { BaseEntity, Entity, Column, Index } from 'typeorm';
+import { RequestHandler } from '@klasa/request-handler';
+import { Guild, Role, GuildMember, Message } from '@klasa/core';
+import { toss } from '@utils/util';
 
 export type GuildEntityResolvable = Guild | Role | GuildMember | Message | string;
 
 @Entity('guild', { schema: 'public' })
 export class GuildEntity extends BaseEntity {
+
 	@Index('guild_pkey', { unique: true })
 	@Column('varchar', { primary: true, length: 19 })
 	public id: string = null!;
@@ -23,9 +24,9 @@ export class GuildEntity extends BaseEntity {
 	private static createHandler = new RequestHandler(
 		GuildEntity.createOne.bind(GuildEntity),
 		GuildEntity.createMany.bind(GuildEntity)
-	)
+	);
 
-	public static async acquire(raw: GuildEntityResolvable) {
+	public static async acquire(raw: GuildEntityResolvable): Promise<GuildEntity> {
 		const id = this.resolveToID(raw);
 		try {
 			return await this.findOneOrFail({ id });
@@ -49,7 +50,7 @@ export class GuildEntity extends BaseEntity {
 				entities.push(entity);
 			}
 			return manager.save(entities);
-		})
+		});
 	}
 
 	private static resolveToID(resolvable: GuildEntityResolvable): string {

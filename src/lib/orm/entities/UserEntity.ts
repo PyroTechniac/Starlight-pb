@@ -7,6 +7,7 @@ export type UserEntityResolvable = User | Message | GuildMember | string;
 
 @Entity('user', { schema: 'public' })
 export class UserEntity extends BaseEntity {
+
 	@Index('user_idx', { unique: true })
 	@Column('varchar', { primary: true, length: 19 })
 	public id: string = null!;
@@ -44,7 +45,7 @@ export class UserEntity extends BaseEntity {
 			}
 
 			return manager.save(entities);
-		})
+		});
 	}
 
 	private static resolveToID(resolvable: UserEntityResolvable): string {
@@ -53,4 +54,5 @@ export class UserEntity extends BaseEntity {
 		if (resolvable instanceof User) return resolvable.id;
 		return resolvable;
 	}
+
 }
