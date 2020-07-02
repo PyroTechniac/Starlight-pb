@@ -5,7 +5,6 @@
 		"noImplicitAny": true,
 		"target": "es2019",
 		"removeComments": true,
-		"declaration": true,
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
 		"incremental": true,

@@ -13,6 +13,11 @@
 		"clean-build": "rimraf dist",
 		"clean-db": "rimraf bwd"
 	},
+	"keywords": [
+		"klasa",
+		"bot",
+		"discord"
+	],
 	"dependencies": {
 		"@klasa/core": "dirigeants/core#ff452f43a236004ef21868c0d925c8dd639ebfad",
 		"@klasa/request-handler": "^0.0.3",
