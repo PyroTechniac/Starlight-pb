@@ -8,6 +8,8 @@
 	"scripts": {
 		"start": "node .",
 		"build": "tsc -p .",
+		"rebuild": "yarn clean-build && yarn build",
+		"rebuild-all": "yarn clean && yarn build",
 		"lint": "eslint src --ext .ts --fix",
 		"clean": "yarn clean-build && yarn clean-db",
 		"clean-build": "rimraf dist",

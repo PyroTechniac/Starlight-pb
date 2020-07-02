@@ -1,20 +1,20 @@
-import { ClientStorageEntity } from '@orm/entities/ClientStorageEntity';
+import { ClientEntity } from '@orm/entities/ClientEntity';
 import { CommandCounterEntity } from '@orm/entities/CommandCounterEntity';
 import { GuildEntity } from '@orm/entities/GuildEntity';
 import { MemberEntity } from '@orm/entities/MemberEntity';
 import { UserEntity } from '@orm/entities/UserEntity';
+import { CamelNamingStrategy } from '@orm/util/CamelNamingStrategy';
 import { rootFolder } from '@utils/constants';
 import { join } from 'path';
 import {
-	Connection,
+	BaseEntity, Connection,
 	ConnectionOptions,
 	createConnection,
 	EntityManager,
 	getConnection,
 	Repository,
 	Transaction,
-	TransactionManager,
-	BaseEntity
+	TransactionManager
 } from 'typeorm';
 
 export class DbManager {
@@ -31,8 +31,8 @@ export class DbManager {
 		return this.#connection.getRepository(CommandCounterEntity);
 	}
 
-	public get clientStorages(): Repository<ClientStorageEntity> {
-		return this.#connection.getRepository(ClientStorageEntity);
+	public get clients(): Repository<ClientEntity> {
+		return this.#connection.getRepository(ClientEntity);
 	}
 
 	public get members(): Repository<MemberEntity> {
@@ -64,7 +64,8 @@ export class DbManager {
 			join(__dirname, 'entities/*.js')
 		],
 		synchronize: process.env.NODE_ENV !== 'production',
-		logging: process.env.NODE_ENV !== 'production'
+		logging: process.env.NODE_ENV !== 'production',
+		namingStrategy: new CamelNamingStrategy()
 	}
 
 	public static async connect(): Promise<DbManager> {

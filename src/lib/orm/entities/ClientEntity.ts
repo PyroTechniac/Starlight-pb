@@ -1,11 +1,12 @@
-import { BaseEntity, Entity, Index, Column } from "typeorm";
+import { BaseEntity, Entity, Index, Column } from "typeorm"
 import { Client, Structure, Piece } from "@klasa/core";
 import { toss } from "@utils/util";
+import { RebootState } from "@orm/entities/RebootState";
 
 export type ClientEntityResolvable = string | Client | Structure<Client> | Piece;
 
-@Entity('client_storage', { schema: 'public' })
-export class ClientStorageEntity extends BaseEntity {
+@Entity('client', { schema: 'public' })
+export class ClientEntity extends BaseEntity {
 	@Index('client_storage_pkey', { unique: true })
 	@Column('varchar', { primary: true, length: 19 })
 	public id: string = null!;
@@ -13,13 +14,16 @@ export class ClientStorageEntity extends BaseEntity {
 	@Column('int')
 	public commandUses = 0;
 
+	@Column((): typeof RebootState => RebootState)
+	public rebootState: RebootState = new RebootState();
+
 	// Different from the other entities acquire because we'll only ever have to make one
-	public static async acquire(raw: ClientEntityResolvable): Promise<ClientStorageEntity> {
+	public static async acquire(raw: ClientEntityResolvable): Promise<ClientEntity> {
 		const id = this.resolveToID(raw);
 		try {
 			return await this.findOneOrFail({ id });
 		} catch {
-			const entity = new ClientStorageEntity();
+			const entity = new ClientEntity();
 			entity.id = id;
 			return this.save(entity);
 		}
