@@ -1,9 +1,7 @@
-import { GuildTextBasedChannel, Message, Permissions, PermissionsFlags, PermissionsResolvable, Piece, PieceConstructor, PieceOptions } from '@klasa/core';
+import { Message, Permissions, PermissionsResolvable, Piece, PieceConstructor, PieceOptions } from '@klasa/core';
 import { ChannelType } from '@klasa/dapi-types';
 import { isFunction } from '@klasa/utils';
 import type { CustomResolverFunction } from '@lib/types/interfaces';
-import { friendlyPermissionNames } from '@utils/constants';
-import { toss } from '@utils/util';
 import type { Command, KlasaClient } from 'klasa';
 /* eslint-disable @typescript-eslint/ban-types */
 
@@ -19,7 +17,7 @@ export function createProxy<T extends object>(target: T, handler: Omit<ProxyHand
 	});
 }
 
-export function createClassDecorator(fn: Function): Function {
+export function createClassDecorator<TFunction extends(...args: any[]) => void>(fn: TFunction): ClassDecorator {
 	return fn;
 }
 
@@ -44,7 +42,7 @@ export function createFunctionInhibitor(inhibitor: Inhibitor, fallback: Fallback
 
 // #region Pieces
 
-export function mergeOptions<T extends PieceOptions>(optionsOrFunction: T | ((client: KlasaClient) => T)): Function {
+export function mergeOptions<T extends PieceOptions>(optionsOrFunction: T | ((client: KlasaClient) => T)): ClassDecorator {
 	return createClassDecorator((target: PieceConstructor<Piece>): PieceConstructor<Piece> => createProxy(target, {
 		construct: (ctor, [store, directory, file, baseOptions = {}]): Piece => new ctor(store, directory, file, {
 			...baseOptions, ...(typeof optionsOrFunction === 'function'
@@ -58,7 +56,7 @@ export function mergeOptions<T extends PieceOptions>(optionsOrFunction: T | ((cl
 
 // #region Commands
 
-export function createResolvers(resolvers: [string, CustomResolverFunction][]): Function {
+export function createResolvers(resolvers: [string, CustomResolverFunction][]): ClassDecorator {
 	return createClassDecorator((target: PieceConstructor<Command>): PieceConstructor<Command> => createProxy(target, {
 		construct: (ctor, [store, directory, files, options]): Command => {
 			const command = new ctor(store, directory, files, options);
@@ -68,11 +66,11 @@ export function createResolvers(resolvers: [string, CustomResolverFunction][]): 
 	}));
 }
 
-export function createResolver(...args: [string, CustomResolverFunction]): Function {
+export function createResolver(...args: [string, CustomResolverFunction]): ClassDecorator {
 	return createResolvers([args]);
 }
 
-export function customizeResponses(responses: [string, string | ((message: Message) => string)][]): Function {
+export function customizeResponses(responses: [string, string | ((message: Message) => string)][]): ClassDecorator {
 	return createClassDecorator((target: PieceConstructor<Command>): PieceConstructor<Command> => createProxy(target, {
 		construct: (ctor, [store, directory, files, options]): Command => {
 			const command = new ctor(store, directory, files, options);
@@ -82,28 +80,24 @@ export function customizeResponses(responses: [string, string | ((message: Messa
 	}));
 }
 
-export function customizeResponse(...args: [string, string | ((message: Message) => string)]): Function {
+export function customizeResponse(...args: [string, string | ((message: Message) => string)]): ClassDecorator {
 	return customizeResponses([args]);
 }
 
 // eslint-disable-next-line max-statements-per-line
-export function requiresPermissionLevel(value: number, fallback: Fallback = (message: Message): never => toss(message.language.get('INHIBITOR_PERMISSIONS'))): MethodDecorator {
+export function requiresPermission(value: number, fallback: Fallback = (): undefined => undefined): MethodDecorator {
 	return createFunctionInhibitor((message: Message): Promise<boolean> => message.hasAtLeastPermissionLevel(value), fallback);
 }
 
-export function requiresGuildContext(fallback: Fallback = (message: Message): never => toss(message.language.get('INHIBITOR_RUNIN', 'text'))): MethodDecorator {
+export function requiresGuildContext(fallback: Fallback = (): undefined => undefined): MethodDecorator {
 	return createFunctionInhibitor((message: Message): boolean => message.guild !== null, fallback);
 }
 
-export function requiresDMContext(fallback: Fallback = (message: Message): never => toss(message.language.get('INHIBITOR_RUNIN', 'dm'))): MethodDecorator {
+export function requiresDMContext(fallback: Fallback = (): undefined => undefined): MethodDecorator {
 	return createFunctionInhibitor((message: Message): boolean => message.guild === null, fallback);
 }
 
-export function requiredPermissions(permissionsResolvable: PermissionsResolvable, fallback: Fallback = (message: Message): never => {
-	const resolvedPermissions = Permissions.resolve(permissionsResolvable);
-	const missing = (message.channel as GuildTextBasedChannel).permissionsFor(message.guild!.me!).missing(resolvedPermissions);
-	throw message.language.get('INHIBITOR_MISSING_BOT_PERMS', missing.map((missing): string => friendlyPermissionNames[missing as PermissionsFlags]));
-}): Function {
+export function requiredPermissions(permissionsResolvable: PermissionsResolvable, fallback: Fallback = (): undefined => undefined): MethodDecorator {
 	const resolved = Permissions.resolve(permissionsResolvable);
 	return createFunctionInhibitor(async (message: Message): Promise<boolean> => {
 		const missing = message.channel.type === ChannelType.GuildText ? message.channel.permissionsFor(message.guild!.me ?? await message.guild!.members.fetch(message.client.user!.id)).missing(resolved) : [];

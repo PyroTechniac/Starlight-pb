@@ -1,0 +1,36 @@
+{
+	"extends": "../tsconfig.json",
+	"compilerOptions": {
+		"outDir": "../dist",
+		"noImplicitAny": true,
+		"removeComments": true,
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"incremental": true,
+		"listEmittedFiles": true,
+		"rootDir": ".",
+		"baseUrl": ".",
+		"composite": true,
+		"paths": {
+			"@utils/*": [
+				"lib/util/*"
+			],
+			"@lib/*": [
+				"lib/*"
+			],
+			"@root/*": [
+				"*"
+			],
+			"@client/*": [
+				"lib/client/*"
+			],
+			"@orm/*": [
+				"lib/orm/*"
+			]
+		},
+		"importsNotUsedAsValues": "error"
+	},
+	"include": [
+		"."
+	]
+}

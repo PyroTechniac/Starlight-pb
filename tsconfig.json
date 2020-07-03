@@ -1,36 +1,6 @@
 {
 	"extends": "eslint-config-bamboo",
 	"compilerOptions": {
-		"outDir": "./dist",
-		"noImplicitAny": true,
-		"target": "es2019",
-		"removeComments": true,
-		"experimentalDecorators": true,
-		"emitDecoratorMetadata": true,
-		"incremental": true,
-		"listEmittedFiles": true,
-		"assumeChangesOnlyAffectDirectDependencies": true,
-		"baseUrl": ".",
-		"paths": {
-			"@utils/*": [
-				"src/lib/util/*"
-			],
-			"@lib/*": [
-				"src/lib/*"
-			],
-			"@root/*": [
-				"src/*"
-			],
-			"@client/*": [
-				"src/lib/client/*"
-			],
-			"@orm/*": [
-				"src/lib/orm/*"
-			]
-		},
-		"importsNotUsedAsValues": "error"
-	},
-	"include": [
-		"src"
-	]
+		"target": "ESNext"
+	}
 }
