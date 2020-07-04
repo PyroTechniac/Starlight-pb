@@ -65,7 +65,9 @@ export class DbManager {
 		entities: [
 			join(__dirname, 'entities/*.js')
 		],
-		synchronize: process.env.NODE_ENV !== 'production',
+		migrations: [
+			join(__dirname, 'migrations/*.js')
+		],
 		logging: process.env.NODE_ENV !== 'production',
 		namingStrategy: new SnakeNamingStrategy(),
 		cli: {

@@ -9,7 +9,7 @@
 		"start": "node .",
 		"build": "tsc -p ./src",
 		"test": "jest",
-		"typeorm-cmd": "node --require module-alias/register ./node_modules/typeorm/cli.js",
+		"typeorm": "node --require module-alias/register ./node_modules/typeorm/cli.js",
 		"test-watch": "jest --watch",
 		"dev": "yarn build && yarn start",
 		"rebuild": "yarn clean-build && yarn build",

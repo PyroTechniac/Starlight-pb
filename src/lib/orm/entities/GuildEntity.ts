@@ -10,10 +10,4 @@ export class GuildEntity {
 	@Column('int')
 	public commandUses = 0;
 
-	@Column('simple-array')
-	public userBlacklist: string[] = [];
-
-	@Column('simple-array')
-	public guildBlacklist: string[] = [];
-
 }
