@@ -9,11 +9,12 @@
 		"start": "node .",
 		"build": "tsc -p ./src",
 		"test": "jest",
+		"typeorm-cmd": "node --require module-alias/register ./node_modules/typeorm/cli.js",
 		"test-watch": "jest --watch",
 		"dev": "yarn build && yarn start",
 		"rebuild": "yarn clean-build && yarn build",
 		"rebuild-all": "yarn clean && yarn build",
-		"lint": "eslint src --fix --ext .ts",
+		"lint": "eslint src test --fix --ext .ts",
 		"clean": "yarn clean-build && yarn clean-db",
 		"clean-build": "rimraf dist",
 		"clean-db": "rimraf bwd"

@@ -15,7 +15,7 @@ export class WorkerManager implements ClientEngine {
 		return this.manager.client;
 	}
 
-	public create(type: WorkerTypes): Worker {
+	public create(type: WorkerTypes): void {
 		if (this.#destroyed) throw new Error('Workers cannot be created from a destroyed WorkerManager');
 		const worker = new Worker(WorkerManager.kWorkerPath, { workerData: { type } });
 		worker.once('exit', (exitCode): void => {
@@ -24,13 +24,23 @@ export class WorkerManager implements ClientEngine {
 			this.create(type);
 		});
 		worker.on('message', this._handleMessage.bind(this, type));
-		return worker;
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public sendToWorker(type: WorkerTypes, message: WorkerPayload): void {
-		throw new Error('Unimplemented.');
+	public init(): Promise<void> {
+		return new Promise((resolve): void => {
+			process.nextTick((): void => resolve());
+		});
 	}
+
+	public async destroy(): Promise<void> {
+		this.#destroyed = true;
+		return new Promise((resolve): void => {
+			process.nextTick((): void => resolve());
+		});
+	}
+
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
+	public sendToWorker(type: WorkerTypes, message: WorkerPayload): void { }
 
 	private _handleMessage(type: WorkerTypes, payload: MasterPayload): void {
 		const normalized = WorkerManager.normalizeType(type);
@@ -40,6 +50,7 @@ export class WorkerManager implements ClientEngine {
 				break;
 			case WorkerOpCodes.Heartbeat:
 				this.client.console.log(`[${normalized}] :: Heartbeat received`);
+				this.sendToWorker(type, { event: WorkerOpCodes.Ack });
 				break;
 		}
 	}

@@ -44,3 +44,11 @@ export interface Requestable<K, V extends IdKeyed<K>> {
 	request(id: K): Promise<V>;
 	requestMany(ids: readonly K[]): Promise<V[]>;
 }
+
+export interface BaseRepository<K, V extends IdKeyed<K>, Rs> {
+	createHandler: RequestHandler<K, V>;
+	acquire(resolvable: Rs): Promise<V>;
+	createOne(id: K): Promise<V>;
+	createMany(ids: readonly K[]): Promise<V[]>;
+	resolveToID(resolvable: Rs): K;
+}

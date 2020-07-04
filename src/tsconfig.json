@@ -2,6 +2,7 @@
 	"extends": "../tsconfig.json",
 	"compilerOptions": {
 		"outDir": "../dist",
+		"target": "ES2019",
 		"noImplicitAny": true,
 		"removeComments": true,
 		"experimentalDecorators": true,

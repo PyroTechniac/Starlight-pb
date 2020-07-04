@@ -1,3 +1,4 @@
+import 'module-alias/register';
 import { parentPort, isMainThread, MessagePort } from 'worker_threads';
 import { MasterPayload, WorkerOpCodes, WorkerPayload } from '@lib/types/workers';
 import { TimerManager } from '@klasa/timer-manager';

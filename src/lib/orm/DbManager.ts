@@ -1,47 +1,48 @@
-import { ClientEntity } from '@orm/entities/ClientEntity';
-import { CommandCounterEntity } from '@orm/entities/CommandCounterEntity';
-import { GuildEntity } from '@orm/entities/GuildEntity';
-import { MemberEntity } from '@orm/entities/MemberEntity';
-import { UserEntity } from '@orm/entities/UserEntity';
-import { CamelNamingStrategy } from '@orm/util/CamelNamingStrategy';
+import { ClientRepository } from '@orm/repositories/ClientRepository';
+import { CommandCounterRepository } from '@orm/repositories/CommandCounterRepository';
+import { GuildRepository } from '@orm/repositories/GuildRepository';
+import { MemberRepository } from '@orm/repositories/MemberRepository';
+import { UserRepository } from '@orm/repositories/UserRepository';
+import { SnakeNamingStrategy } from '@orm/util/SnakeNamingStrategy';
 import { rootFolder } from '@utils/constants';
 import { join } from 'path';
 import {
-	BaseEntity, Connection,
+	Connection,
 	ConnectionOptions,
 	createConnection,
 	EntityManager,
 	getConnection,
-	Repository,
 	Transaction,
-	TransactionManager
+	TransactionManager,
+	ObjectLiteral
 } from 'typeorm';
 
 export class DbManager {
 
 	#connection: Connection; // eslint-disable-line @typescript-eslint/explicit-member-accessibility
+
 	private constructor(connection: Connection) {
 		this.#connection = connection;
 	}
 
-	public get users(): Repository<UserEntity> {
-		return this.#connection.getRepository(UserEntity);
+	public get users(): UserRepository {
+		return this.#connection.getCustomRepository(UserRepository);
 	}
 
-	public get commandCounters(): Repository<CommandCounterEntity> {
-		return this.#connection.getRepository(CommandCounterEntity);
+	public get commandCounters(): CommandCounterRepository {
+		return this.#connection.getCustomRepository(CommandCounterRepository);
 	}
 
-	public get clients(): Repository<ClientEntity> {
-		return this.#connection.getRepository(ClientEntity);
+	public get clients(): ClientRepository {
+		return this.#connection.getCustomRepository(ClientRepository);
 	}
 
-	public get members(): Repository<MemberEntity> {
-		return this.#connection.getRepository(MemberEntity);
+	public get members(): MemberRepository {
+		return this.#connection.getCustomRepository(MemberRepository);
 	}
 
-	public get guilds(): Repository<GuildEntity> {
-		return this.#connection.getRepository(GuildEntity);
+	public get guilds(): GuildRepository {
+		return this.#connection.getCustomRepository(GuildRepository);
 	}
 
 	public transaction<T>(transactionFn: (manager: EntityManager) => Promise<T>): Promise<T> {
@@ -49,9 +50,9 @@ export class DbManager {
 	}
 
 	@Transaction()
-	public async save(entities: BaseEntity[], @TransactionManager() entityManager?: EntityManager): Promise<void> {
-		if (typeof entityManager === 'undefined') throw new Error('Unreachable.');
-		await entityManager.save(entities);
+	public save<V extends ObjectLiteral>(entities: V[], @TransactionManager() entityManager?: EntityManager): Promise<V[]> {
+		if (typeof entityManager === 'undefined') throw new Error('Unreachable');
+		return entityManager.save(entities);
 	}
 
 	public async destroy(): Promise<void> {
@@ -66,7 +67,12 @@ export class DbManager {
 		],
 		synchronize: process.env.NODE_ENV !== 'production',
 		logging: process.env.NODE_ENV !== 'production',
-		namingStrategy: new CamelNamingStrategy()
+		namingStrategy: new SnakeNamingStrategy(),
+		cli: {
+			entitiesDir: 'src/lib/orm/entities',
+			migrationsDir: 'src/lib/orm/migrations',
+			subscribersDir: 'src/lib/orm/subsciptions'
+		}
 	};
 
 	public static async connect(): Promise<DbManager> {
