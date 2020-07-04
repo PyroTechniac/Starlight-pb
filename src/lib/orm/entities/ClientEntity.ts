@@ -1,7 +1,7 @@
 import { Column, Entity, Index } from 'typeorm';
 import { RebootState } from '@orm/entities/RebootState';
 
-@Entity('client', { schema: 'public' })
+@Entity({ schema: 'public' })
 export class ClientEntity {
 
 	@Index('client_storage_pkey', { unique: true })
@@ -11,7 +11,7 @@ export class ClientEntity {
 	@Column('int')
 	public commandUses = 0;
 
-	@Column((): typeof RebootState => RebootState, { prefix: false })
+	@Column((): typeof RebootState => RebootState)
 	public rebootState: RebootState = new RebootState();
 
 }

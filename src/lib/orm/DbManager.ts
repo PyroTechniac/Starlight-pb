@@ -3,7 +3,6 @@ import { CommandCounterRepository } from '@orm/repositories/CommandCounterReposi
 import { GuildRepository } from '@orm/repositories/GuildRepository';
 import { MemberRepository } from '@orm/repositories/MemberRepository';
 import { UserRepository } from '@orm/repositories/UserRepository';
-import { SnakeNamingStrategy } from '@orm/util/SnakeNamingStrategy';
 import { rootFolder } from '@utils/constants';
 import { join } from 'path';
 import {
@@ -69,7 +68,6 @@ export class DbManager {
 			join(__dirname, 'migrations/*.js')
 		],
 		logging: process.env.NODE_ENV !== 'production',
-		namingStrategy: new SnakeNamingStrategy(),
 		cli: {
 			entitiesDir: 'src/lib/orm/entities',
 			migrationsDir: 'src/lib/orm/migrations',

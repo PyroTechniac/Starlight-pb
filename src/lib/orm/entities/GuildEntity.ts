@@ -1,6 +1,6 @@
 import { Column, Entity, Index } from 'typeorm';
 
-@Entity('guild', { schema: 'public' })
+@Entity({ schema: 'public' })
 export class GuildEntity {
 
 	@Index('guild_pkey', { unique: true })

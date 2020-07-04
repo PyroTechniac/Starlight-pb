@@ -1,7 +1,7 @@
 import { Column, Entity, Index } from 'typeorm';
 
 @Index('member_guild_user_idx', ['guildID', 'userID'], { unique: true })
-@Entity('member', { schema: 'public' })
+@Entity({ schema: 'public' })
 export class MemberEntity {
 
 	@Column('varchar', { primary: true, length: 19 })

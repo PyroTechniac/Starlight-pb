@@ -1,6 +1,6 @@
 import { Column, Entity, Index } from 'typeorm';
 
-@Entity('user', { schema: 'public' })
+@Entity({ schema: 'public' })
 export class UserEntity {
 
 	@Index('user_idx', { unique: true })

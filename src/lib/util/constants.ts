@@ -1,6 +1,6 @@
 import { Permissions, PermissionsFlags } from '@klasa/core';
 import { toTitleCase } from '@klasa/utils';
-import { Intents } from '@klasa/ws';
+import { Intents, IntentsFlags } from '@klasa/ws';
 import { config } from 'dotenv';
 import type { KlasaClientOptions } from 'klasa';
 import { join, resolve } from 'path';
@@ -31,7 +31,14 @@ export const STARLIGHT_OPTIONS: KlasaClientOptions = {
 		offset: 0
 	},
 	ws: {
-		intents: Intents.ALL
+		intents: new Intents([
+			IntentsFlags.Guilds,
+			IntentsFlags.GuildMembers,
+			IntentsFlags.GuildMessages,
+			IntentsFlags.GuildMessageReactions,
+			IntentsFlags.DirectMessages,
+			IntentsFlags.DirectMessageReactions
+		])
 	},
 	consoleEvents: {
 		debug: true

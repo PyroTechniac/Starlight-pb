@@ -1,6 +1,6 @@
 import { Column, Entity, Index } from 'typeorm';
 
-@Entity('command_counter', { schema: 'public' })
+@Entity({ schema: 'public' })
 export class CommandCounterEntity {
 
 	@Index('command_counter_pkey', { unique: true })
