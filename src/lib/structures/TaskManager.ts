@@ -52,6 +52,11 @@ export class TaskManager extends Cache<string, TaskEntity> implements ClientEngi
 		return entity.setup(this).delete();
 	}
 
+	public async removeAll(): Promise<void> {
+		const manager = await DbManager.connect();
+		await manager.tasks.clear();
+	}
+
 	protected async execute(): Promise<void> {
 		if (this.size) {
 			const now = Date.now();
