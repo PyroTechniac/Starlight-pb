@@ -17,6 +17,7 @@ export default class extends Event {
 		const manager = await DbManager.connect();
 		await this.initCommands(manager);
 		await this.initGuilds(manager);
+		await this.client.manager.tasks.init();
 	}
 
 	public async init(): Promise<void> {

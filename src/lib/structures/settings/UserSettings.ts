@@ -1,6 +1,7 @@
-import {Settings} from 'klasa';
+import { Settings } from 'klasa';
 
 export class UserSettings extends Settings {
+
 	public sync(): Promise<this> {
 		return Promise.resolve(this);
 	}
@@ -8,4 +9,5 @@ export class UserSettings extends Settings {
 	public destroy(): Promise<this> {
 		return Promise.resolve(this);
 	}
+
 }

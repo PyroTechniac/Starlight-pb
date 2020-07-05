@@ -12,9 +12,11 @@ describe('mergeOptions', (): void => {
 			cooldown: 10
 		})
 		class TestPiece extends Command {
+
 			public getName(): string {
 				return this.name;
 			}
+
 		}
 
 		const instance = new TestPiece(new MockDecoratorCommandStore('name', client), __dirname, [__filename]);
@@ -27,13 +29,15 @@ describe('mergeOptions', (): void => {
 
 	test('mergeOptions correctly resolves options', (): void => {
 		@decorators.mergeOptions((client): CommandOptions => ({
-			enabled: !!client,
+			enabled: Boolean(client),
 			name: 'test'
 		}))
 		class TestPiece extends Command {
+
 			public getName(): string {
 				return this.name;
 			}
+
 		}
 
 		const instance = new TestPiece(new MockDecoratorCommandStore('name', client), __dirname, [__filename]);
@@ -147,10 +151,12 @@ describe('resolvers', (): void => {
 
 describe('requiresDMContext', (): void => {
 	class Test {
+
 		@decorators.requiresDMContext()
 		public inGuild(message: Message): Promise<boolean> {
 			return Promise.resolve(message.guild === null);
 		}
+
 	}
 
 	const instance = new Test();
@@ -168,15 +174,17 @@ describe('requiresDMContext', (): void => {
 		const message = new Message('Hello, world!', guild, 5);
 		const inGuild = await instance.inGuild(message);
 		expect(inGuild).toBe(true);
-	})
+	});
 });
 
 describe('requiresGuildContext', (): void => {
 	class Test {
+
 		@decorators.requiresGuildContext()
 		public getName(message: Message): Promise<string> {
 			return Promise.resolve(message.guild!.name);
 		}
+
 	}
 
 	const instance = new Test();
@@ -198,10 +206,12 @@ describe('requiresGuildContext', (): void => {
 
 describe('requiresPermission', (): void => {
 	class Test {
+
 		@decorators.requiresPermission(5)
 		public getContet(message: Message): Promise<string> {
 			return Promise.resolve(message.content);
 		}
+
 	}
 
 	const instance = new Test();

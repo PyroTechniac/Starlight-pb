@@ -5,6 +5,7 @@ import { MemberRepository } from '@orm/repositories/MemberRepository';
 import { UserRepository } from '@orm/repositories/UserRepository';
 import { rootFolder } from '@utils/constants';
 import { join } from 'path';
+import { TaskEntity } from '@orm/entities/TaskEntity';
 import {
 	Connection,
 	ConnectionOptions,
@@ -13,7 +14,8 @@ import {
 	getConnection,
 	Transaction,
 	TransactionManager,
-	ObjectLiteral
+	ObjectLiteral,
+	Repository
 } from 'typeorm';
 
 export class DbManager {
@@ -42,6 +44,10 @@ export class DbManager {
 
 	public get guilds(): GuildRepository {
 		return this.#connection.getCustomRepository(GuildRepository);
+	}
+
+	public get tasks(): Repository<TaskEntity> {
+		return this.#connection.getRepository(TaskEntity);
 	}
 
 	public transaction<T>(transactionFn: (manager: EntityManager) => Promise<T>): Promise<T> {

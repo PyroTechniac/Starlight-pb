@@ -1,5 +1,5 @@
 import type { Message, Client } from '@klasa/core';
-import type { Command, Possible } from 'klasa';
+import type { Command, Possible, TimeResolvable } from 'klasa';
 import type { ClientManager } from '@lib/structures/ClientManager';
 import type { Inhibitor, Fallback } from '@utils/decorators';
 import type { FetchTypes } from '@lib/types/types';
@@ -51,4 +51,11 @@ export interface BaseRepository<K, V extends IdKeyed<K>, Rs> {
 	createOne(id: K): Promise<V>;
 	createMany(ids: readonly K[]): Promise<V[]>;
 	resolveToID(resolvable: Rs): K;
+}
+
+export interface TaskEntityCreateOptions {
+	name: string;
+	time: TimeResolvable;
+	data?: Record<PropertyKey, any>;
+	catchUp?: boolean;
 }
