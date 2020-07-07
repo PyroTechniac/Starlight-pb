@@ -17,7 +17,9 @@ export default class extends Event {
 		const manager = await DbManager.connect();
 		await this.initCommands(manager);
 		await this.initGuilds(manager);
+		await this.initClient(manager);
 		await this.client.manager.tasks.init();
+		this.destroy();
 	}
 
 	public async init(): Promise<void> {
@@ -26,12 +28,21 @@ export default class extends Event {
 		this.commands.push(...await commandCounters.find());
 	}
 
+	private destroy(): void {
+		this.guilds = [];
+		this.commands = [];
+	}
+
 	private async initCommands({ commandCounters }: DbManager): Promise<void> {
 		await Promise.all(
 			this.client.commands
 				.filter((command): boolean => !this.commands.some((entry): boolean => entry.id === command.name))
 				.map(commandCounters.acquire.bind(commandCounters))
 		);
+	}
+
+	private async initClient({ clients }: DbManager): Promise<void> {
+		await clients.acquire(this);
 	}
 
 	private async initGuilds({ guilds }: DbManager): Promise<void> {
