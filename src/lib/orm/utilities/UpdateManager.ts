@@ -13,24 +13,30 @@ export class UpdateManager<T extends BaseID> {
 		this.#entity = entity;
 	}
 
-	public add(cb: (entity: T) => void) {
+	public add(cb: (entity: T) => void): Promise<void> {
 		this.#queue.push(cb);
 		return this.finish();
 	}
 
-	public async finish(): Promise<T> {
+	public async finish(): Promise<void> {
 		for await (const __ of this.run()) {
 			// noop
 		}
-		await (await this.#entity.save()).reload();
-		return this.#entity;
+
+		await this.#entity.save();
 	}
 
 	private async *run(): AsyncIterableIterator<void> {
 		const next = this.#queue.shift() ?? ((): null => null);
+		const entity = this.#entity;
+		const clone = entity.clone();
 		await this.#manager.wait();
 		try {
-			await next(this.#entity);
+			await next(clone);
+			this.#entity = clone;
+		} catch (error) {
+			this.#entity = entity;
+			throw error;
 		} finally {
 			this.#manager.shift();
 		}

@@ -59,8 +59,8 @@ export class TaskEntity extends BaseID {
 		this.recurring = value?.cron ?? null;
 	}
 
-	public clone(): TaskEntity {
-		return new TaskEntity(this).setup(this.#manager);
+	public clone(): this {
+		return super.clone().setup(this.#manager);
 	}
 
 	public setup(manager: TaskManager): this {

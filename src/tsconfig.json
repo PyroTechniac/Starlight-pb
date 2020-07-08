@@ -29,7 +29,8 @@
 				"lib/orm/*"
 			]
 		},
-		"importsNotUsedAsValues": "error"
+		"importsNotUsedAsValues": "error",
+		"useDefineForClassFields": true
 	},
 	"include": [
 		"."
