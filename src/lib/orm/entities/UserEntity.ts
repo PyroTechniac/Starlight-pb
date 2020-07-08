@@ -11,13 +11,4 @@ export class UserEntity extends BaseID {
 	@Column('int')
 	public commandUses = 0;
 
-	@Column('int')
-	public points = 0;
-
-	@Column('bigint', { transformer: { from: Number, to: String } })
-	public money = 0;
-
-	public get level(): number {
-		return Math.round(0.2 * Math.sqrt(this.points));
-	}
 }
