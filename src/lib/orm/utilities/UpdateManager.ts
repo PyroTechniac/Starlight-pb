@@ -3,7 +3,7 @@ import type { BaseID } from "@orm/entities/base/BaseID";
 import { isNullish } from '@utils/util';
 
 export class UpdateManager<T extends BaseID> {
-	#queue: ((entity: T) => void)[] = [];
+	#queue: ((entity: T) => void | Promise<void>)[] = [];
 
 	#entity: T;
 
@@ -22,14 +22,15 @@ export class UpdateManager<T extends BaseID> {
 		for await (const __ of this.run()) {
 			// noop
 		}
-		return this.#entity.save();
+		await (await this.#entity.save()).reload();
+		return this.#entity;
 	}
 
 	private async *run(): AsyncIterableIterator<void> {
 		const next = this.#queue.shift() ?? ((): null => null);
 		await this.#manager.wait();
 		try {
-			next(this.#entity);
+			await next(this.#entity);
 		} finally {
 			this.#manager.shift();
 		}
