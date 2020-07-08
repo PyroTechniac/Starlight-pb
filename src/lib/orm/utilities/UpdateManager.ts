@@ -19,14 +19,10 @@ export class UpdateManager<T extends BaseID> {
 	}
 
 	public async finish(): Promise<T> {
-		let iter = this.run();
-
-		let value = await iter.next();
-		while (!value.done) {
-			value = await iter.next();
+		for await (const __ of this.run()) {
+			// noop
 		}
-
-		return this.#entity;
+		return this.#entity.save();
 	}
 
 	private async *run(): AsyncIterableIterator<void> {
@@ -39,7 +35,6 @@ export class UpdateManager<T extends BaseID> {
 		}
 
 		if (this.#queue.length !== 0) yield* this.run();
-		await this.#entity.save();
 	}
 
 	private static managers = new Map<string, UpdateManager<BaseID>>();

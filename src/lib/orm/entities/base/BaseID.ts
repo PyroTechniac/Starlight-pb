@@ -12,7 +12,9 @@ export abstract class BaseID extends BaseEntity implements IdKeyed<string> {
 
 	public update(cb: (entity: this) => void): Promise<this> {
 		const manager = UpdateManager.acquire(this);
-		return manager.add(cb);
+		return manager.add(cb)
+			.then((): Promise<void> => this.reload())
+			.then((): this => this);
 	}
 
 }
