@@ -10,7 +10,10 @@ export default class extends Finalizer {
 		await this.ensureSettings(message, command, connection);
 		const { commandCounters, users, clients } = connection;
 		await commandCounters.increment({ id: command.name }, 'uses', 1);
-		await users.increment({ id: message.author.id }, 'commandUses', 1);
+		const userSettings = await users.acquire(message);
+		await userSettings.update((data): void => {
+			data.commandUses++;
+		});
 		await clients.increment({ id: this.client.user!.id }, 'commandUses', 1);
 		await this.handleGuildMessage(message, connection);
 	}
@@ -25,7 +28,6 @@ export default class extends Finalizer {
 	}
 
 	private async ensureSettings(message: Message, command: Command, { users, clients, commandCounters }: DbManager): Promise<void> {
-		await users.acquire(message);
 		await clients.acquire(message);
 		await commandCounters.acquire(command);
 	}

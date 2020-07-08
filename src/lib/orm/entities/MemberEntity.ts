@@ -1,8 +1,9 @@
 import { Column, Entity, Index } from 'typeorm';
+import { BaseID } from '@orm/entities/base/BaseID';
 
 @Index('member_guild_user_idx', ['guildID', 'userID'], { unique: true })
 @Entity({ schema: 'public' })
-export class MemberEntity {
+export class MemberEntity extends BaseID {
 
 	@Column('varchar', { primary: true, length: 19 })
 	public guildID: string = null!;

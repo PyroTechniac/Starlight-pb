@@ -1,13 +1,11 @@
-import type { Message, MessageBuilder } from "@klasa/core";
-import { DbManager } from "@orm/DbManager";
-import type { UserEntity } from "@orm/entities/UserEntity";
-import { mergeOptions } from "@utils/decorators";
 import { Command, CommandOptions } from "klasa";
+import { mergeOptions } from "@utils/decorators";
+import { DbManager } from "@orm/DbManager";
+import type { Message, MessageBuilder } from "@klasa/core";
 
 @mergeOptions<CommandOptions>({
-	aliases: ['dailies'],
-	cooldown: 30,
-	description: 'Claims dailies, testing with it rn'
+	description: "Claims daily, used for testing rn.",
+	cooldown: 30
 })
 export default class extends Command {
 	private get money(): number {
@@ -15,16 +13,10 @@ export default class extends Command {
 	}
 
 	public async run(message: Message): Promise<Message[]> {
-		const { money } = await this.claimDaily(message, await DbManager.connect());
-		return message.reply((mb): MessageBuilder => mb.setContent(`Successfully claimed daily, new balance: ${money}`));
-	}
-
-	private async claimDaily(message: Message, { users }: DbManager): Promise<UserEntity> {
-		const { money } = this;
-		const settings = await users.acquire(message);
-
-		settings.money += money;
-
-		return users.saveOne(settings);
+		const userSettings = await (await DbManager.connect()).users.acquire(message);
+		await userSettings.update((data): void => {
+			data.money += this.money;
+		});
+		return message.reply((mb): MessageBuilder => mb.setContent(`Daily claimed, new balance: ${userSettings.money}`));
 	}
 }

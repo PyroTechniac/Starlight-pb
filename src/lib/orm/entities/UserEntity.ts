@@ -1,7 +1,8 @@
+import { BaseID } from '@orm/entities/base/BaseID';
 import { Column, Entity, Index } from 'typeorm';
 
 @Entity({ schema: 'public' })
-export class UserEntity {
+export class UserEntity extends BaseID {
 
 	@Index('user_idx', { unique: true })
 	@Column('varchar', { primary: true, length: 19 })
@@ -13,16 +14,10 @@ export class UserEntity {
 	@Column('int')
 	public points = 0;
 
-	@Column('bigint', {
-		transformer: {
-			from: Number,
-			to: String
-		}
-	})
+	@Column('bigint', { transformer: { from: Number, to: String } })
 	public money = 0;
 
 	public get level(): number {
-		return Math.floor(0.2 * Math.sqrt(this.points));
+		return Math.round(0.2 * Math.sqrt(this.points));
 	}
-
 }

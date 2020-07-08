@@ -1,3 +1,4 @@
+import { TaskEntity } from '@orm/entities/TaskEntity';
 import { ClientRepository } from '@orm/repositories/ClientRepository';
 import { CommandCounterRepository } from '@orm/repositories/CommandCounterRepository';
 import { GuildRepository } from '@orm/repositories/GuildRepository';
@@ -5,17 +6,15 @@ import { MemberRepository } from '@orm/repositories/MemberRepository';
 import { UserRepository } from '@orm/repositories/UserRepository';
 import { rootFolder } from '@utils/constants';
 import { join } from 'path';
-import { TaskEntity } from '@orm/entities/TaskEntity';
 import {
 	Connection,
 	ConnectionOptions,
 	createConnection,
 	EntityManager,
 	getConnection,
-	Transaction,
-	TransactionManager,
 	ObjectLiteral,
-	Repository
+	Repository, Transaction,
+	TransactionManager
 } from 'typeorm';
 
 export class DbManager {

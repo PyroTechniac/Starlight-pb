@@ -2,12 +2,13 @@ import type { Client } from '@klasa/core';
 import { Cron } from '@klasa/cron';
 import type { TaskManager } from '@lib/structures/TaskManager';
 import type { TaskEntityEditOptions } from '@lib/types/types';
+import { BaseID } from '@orm/entities/base/BaseID';
 import { isNullish } from '@utils/util';
 import type { Task, TimeResolvable } from 'klasa';
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ schema: 'public' })
-export class TaskEntity extends BaseEntity {
+export class TaskEntity extends BaseID {
 
 	/* eslint-disable @typescript-eslint/explicit-member-accessibility */
 	#client: Client = null!;
