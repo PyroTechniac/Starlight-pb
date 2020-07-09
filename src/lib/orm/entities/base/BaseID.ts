@@ -1,9 +1,10 @@
-import type { IdKeyed } from "@klasa/request-handler";
-import { UpdateManager } from "@orm/utilities/UpdateManager";
-import { BaseEntity } from "typeorm";
-import type { Constructor } from "@klasa/core";
+import type { IdKeyed } from '@klasa/request-handler';
+import { UpdateManager } from '@orm/utilities/UpdateManager';
+import { BaseEntity } from 'typeorm';
+import type { Constructor } from '@klasa/core';
 
 export abstract class BaseID extends BaseEntity implements IdKeyed<string> {
+
 	public abstract id: string;
 
 	public update(cb: (entity: this) => void): Promise<this> {
@@ -20,8 +21,9 @@ export abstract class BaseID extends BaseEntity implements IdKeyed<string> {
 		return clone;
 	}
 
-	public async sync(): Promise<this> {
-		await this.reload();
-		return this;
+	public sync(): Promise<this> {
+		return this.reload()
+			.then((): this => this);
 	}
+
 }

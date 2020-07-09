@@ -1,13 +1,16 @@
 import { AsyncQueue } from '@klasa/async-queue';
-import type { BaseID } from "@orm/entities/base/BaseID";
+import type { BaseID } from '@orm/entities/base/BaseID';
 import { isNullish } from '@utils/util';
 
 export class UpdateManager<T extends BaseID> {
+
+	/* eslint-disable @typescript-eslint/explicit-member-accessibility */
 	#queue: ((entity: T) => void | Promise<void>)[] = [];
 
 	#entity: T;
 
 	#manager = new AsyncQueue();
+	/* eslint-enable @typescript-eslint/explicit-member-accessibility */
 
 	public constructor(entity: T) {
 		this.#entity = entity;
@@ -15,18 +18,18 @@ export class UpdateManager<T extends BaseID> {
 
 	public add(cb: (entity: T) => void): Promise<void> {
 		this.#queue.push(cb);
-		return this.finish();
+		return this.run();
 	}
 
-	public async finish(): Promise<void> {
-		for await (const __ of this.run()) {
+	public async run(): Promise<void> {
+		for await (const __ of this) { // eslint-disable-line @typescript-eslint/no-unused-vars
 			// noop
 		}
 
 		await this.#entity.save();
 	}
 
-	private async *run(): AsyncIterableIterator<void> {
+	public async *[Symbol.asyncIterator](): AsyncIterableIterator<void> {
 		const next = this.#queue.shift() ?? ((): null => null);
 		const entity = this.#entity;
 		const clone = entity.clone();
@@ -41,7 +44,7 @@ export class UpdateManager<T extends BaseID> {
 			this.#manager.shift();
 		}
 
-		if (this.#queue.length !== 0) yield* this.run();
+		if (this.#queue.length !== 0) yield *this;
 	}
 
 	private static managers = new Map<string, UpdateManager<BaseID>>();
@@ -55,4 +58,5 @@ export class UpdateManager<T extends BaseID> {
 		this.managers.set(base.id, manager as unknown as UpdateManager<T>);
 		return manager;
 	}
+
 }

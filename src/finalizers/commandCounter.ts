@@ -13,7 +13,7 @@ export default class extends Finalizer {
 		const userSettings = await users.acquire(message);
 		await userSettings.update((data): void => {
 			data.commandUses++;
-		})
+		});
 		await clients.increment({ id: this.client.user!.id }, 'commandUses', 1);
 		await this.handleGuildMessage(message, connection);
 	}
@@ -32,4 +32,5 @@ export default class extends Finalizer {
 		await clients.acquire(message);
 		await commandCounters.acquire(command);
 	}
+
 }
