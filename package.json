@@ -28,6 +28,7 @@
 		"@klasa/core": "dirigeants/core#ff452f43a236004ef21868c0d925c8dd639ebfad",
 		"@klasa/request-handler": "^0.0.3",
 		"abort-controller": "^3.0.0",
+		"class-validator": "^0.12.2",
 		"dotenv": "^8.2.0",
 		"klasa": "dirigeants/klasa#8b74c86d760fe90d7fcb0cae87cc3ad93d094cb6",
 		"module-alias": "^2.2.2",

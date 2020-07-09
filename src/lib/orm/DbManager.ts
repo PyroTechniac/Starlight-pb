@@ -72,6 +72,9 @@ export class DbManager {
 		migrations: [
 			join(__dirname, 'migrations/*.js')
 		],
+		subscribers: [
+			join(__dirname, 'subscriptions/*.js')
+		],
 		logging: process.env.NODE_ENV !== 'production',
 		cli: {
 			entitiesDir: 'src/lib/orm/entities',
