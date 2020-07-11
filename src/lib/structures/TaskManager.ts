@@ -1,92 +1,151 @@
-import { Cache } from '@klasa/cache';
-import type { Client } from '@klasa/core';
-import type { ClientManager } from '@lib/structures/ClientManager';
-import type { ClientEngine, TaskEntityCreateOptions } from '@lib/types/interfaces';
-import { DbManager } from '@orm/DbManager';
-import { TaskEntity } from '@orm/entities/TaskEntity';
-import { isNullish } from '@utils/util';
+import type { ClientEngine, TaskEntityCreateOptions } from "@lib/types/interfaces";
+import type { ClientManager } from "@lib/structures//ClientManager";
+import type { KlasaClient, TimeResolvable } from "klasa";
+import { TaskEntity, ResponseValue, ResponseType } from "@lib/orm/entities/TaskEntity";
+import { DbManager } from "@orm/DbManager";
+import { Cron } from '@klasa/cron';
+import { isNullish } from "@utils/util";
 import { TimerManager } from '@klasa/timer-manager';
+import { ClientEvents } from "@klasa/core";
 
-
-export class TaskManager extends Cache<string, TaskEntity> implements ClientEngine {
+export class TaskManager implements ClientEngine, Iterable<TaskEntity> {
+	public queue: TaskEntity[] = [];
 
 	#interval: NodeJS.Timer | null = null; // eslint-disable-line @typescript-eslint/explicit-member-accessibility
 
-	public constructor(public readonly manager: ClientManager) {
-		super();
+	public constructor(public readonly manager: ClientManager) { }
+
+	public get client(): KlasaClient {
+		return this.client;
 	}
 
-	public get client(): Client {
-		return this.manager.client;
-	}
+	public async init() {
+		const { tasks } = await DbManager.connect();
+		const found = await tasks.find();
 
-	public async init(): Promise<void> {
-		const manager = await DbManager.connect();
-		const tasks = await manager.tasks.find();
-
-		for (const task of tasks) {
-			await this._insert(task.setup(this));
-		}
-	}
-
-	public async create(data: TaskEntityCreateOptions): Promise<TaskEntity> {
-		const manager = await DbManager.connect();
-		const entity = new TaskEntity()
-			.setup(this)
-			.setTaskName(data.name)
-			.setTime(data.time)
-			.setData(data.data ?? {})
-			.setCatchUp(data.catchUp ?? true);
-
-		await this._insert(entity);
-
+		for (const entry of found) this._insert(entry);
 		this._checkInterval();
-
-		return manager.tasks.save(entity);
 	}
 
-	public async remove(id: string): Promise<TaskEntity | null> {
-		const manager = await DbManager.connect();
-		const entity = super.get(id) || await manager.tasks.findOne({ id });
-		if (isNullish(entity)) return null;
-		return entity.setup(this).delete();
+	public async add(taskID: string, timeResolvable: TimeResolvable, options: TaskEntityCreateOptions = {}): Promise<TaskEntity> {
+		if (!this.client.tasks.has(taskID)) throw new Error(`The task '${taskID}' does not exist.`);
+
+		const [time, cron] = this._resolveTime(timeResolvable);
+		const entry = new TaskEntity();
+		entry.taskID = taskID;
+		entry.runTime = time;
+		entry.recurring = cron;
+		entry.catchUp = options.catchUp ?? true;
+		entry.data = options.data ?? {};
+		await entry.save();
+
+		this._insert(entry.setup(this).resume());
+		this._checkInterval();
+		return entry;
 	}
 
-	public async removeAll(): Promise<void> {
-		const manager = await DbManager.connect();
-		await manager.tasks.clear();
+	public async remove(entityOrID: TaskEntity | TaskEntity['id']): Promise<boolean> {
+		if (typeof entityOrID === 'number') {
+			entityOrID = this.queue.find((entity): boolean => entity.id === entityOrID)!;
+			if (isNullish(entityOrID)) return false;
+		}
+
+		const entity = entityOrID as TaskEntity;
+		await entity.pause().remove();
+		this._remove(entity);
+		this._checkInterval();
+		return true;
 	}
 
-	protected async execute(): Promise<void> {
-		if (this.size) {
+	public async execute(): Promise<void> {
+		if (this.queue.length) {
 			const now = Date.now();
-			const execute: Promise<TaskEntity>[] = [];
-			for (const task of this.values()) {
-				if (task.time! > now) continue;
-				execute.push(task.run());
+			const execute = [];
+
+			for (const entry of this){
+				if (entry.runTime.getTime() > now) break;
+				execute.push(entry.run());
 			}
 
-			if (!execute.length) {
-				this._checkInterval();
-				return;
-			}
-			await Promise.all(execute);
+			if (execute.length === 0) return;
+			await this._handleResponses(await Promise.all(execute));
 		}
+
 		this._checkInterval();
 	}
 
-	private async _insert(task: TaskEntity): Promise<TaskEntity | null> {
-		if (!task.catchUp && task.time! < Date.now()) {
-			if (!task.cron) {
-				await task.delete();
-				return null;
-			}
-			await task.edit({ time: task.cron });
-		}
+	public *[Symbol.iterator](): IterableIterator<TaskEntity> {
+		yield* this.queue;
+	}
 
-		super.set(task.id!, task);
-		this._checkInterval();
-		return task;
+	private _insert(entity: TaskEntity): void {
+		const index = this.queue.findIndex((entry): boolean => entry.time > entity.time);
+		if (index === -1) this.queue.push(entity);
+		else this.queue.splice(index, 0, entity);
+	}
+
+	private _remove(entity: TaskEntity): void {
+		const index = this.queue.findIndex((entry): boolean => entry === entity);
+		if (index !== -1) this.queue.splice(index, 1);
+	}
+
+	private async _handleResponses(responses: readonly ResponseValue[]) {
+		const connection = await DbManager.connect();
+		const queryRunner = connection.startQueryRunner();
+		await queryRunner.connect();
+		await queryRunner.startTransaction();
+
+		const updated: TaskEntity[] = [];
+		const removed: TaskEntity[] = [];
+		try {
+			for (const response of responses) {
+				response.entry.pause();
+
+				switch (response.type) {
+					case ResponseType.Delay: {
+						response.entry.runTime = new Date(response.entry.runTime.getTime() + response.value);
+						updated.push(response.entry);
+						await queryRunner.manager.save(response.entry);
+					}
+					case ResponseType.Finished: {
+						removed.push(response.entry);
+						await queryRunner.manager.remove(response.entry);
+					}
+					case ResponseType.Ignore: {
+						continue;
+					}
+					case ResponseType.Update: {
+						response.entry.runTime = response.value;
+						updated.push(response.entry);
+						await queryRunner.manager.save(response.entry);
+					}
+				}
+			}
+
+			await queryRunner.commitTransaction();
+
+			for (const entry of removed) {
+				this._remove(entry);
+			}
+
+			for (const entry of updated) {
+				const index = this.queue.findIndex((entity): boolean => entity === entry);
+				if (index === -1) continue;
+
+				this.queue.splice(index, 1);
+				this._insert(entry);
+
+				entry.resume();
+			}
+		} catch (error) {
+			this.client.emit(ClientEvents.WTF, error);
+
+			await queryRunner.rollbackTransaction();
+
+			await Promise.all(updated.map((entry): Promise<void> => entry.reload()));
+		} finally {
+			await queryRunner.release();
+		}
 	}
 
 	private _clearInterval(): void {
@@ -97,12 +156,18 @@ export class TaskManager extends Cache<string, TaskEntity> implements ClientEngi
 	}
 
 	private _checkInterval(): void {
-		if (!this.size) this._clearInterval();
-		else if (!this.#interval) this.#interval = TimerManager.setInterval(this.execute.bind(this), 30000);
+		if (!this.queue.length) this._clearInterval();
+		else if (isNullish(this.#interval)) this.#interval = TimerManager.setInterval(this.execute.bind(this), this.client.options.schedule.interval)
 	}
 
-	public static get [Symbol.species](): typeof Cache {
-		return Cache;
+	private _resolveTime(time: TimeResolvable): [Date, Cron | null] {
+		if (time instanceof Date) return [time, null];
+		if (time instanceof Cron) return [time.next(), time];
+		if (typeof time === 'number') return [new Date(time), null];
+		if (typeof time === 'string') {
+			const cron = new Cron(time);
+			return [cron.next(), cron];
+		}
+		throw new TypeError('Invalid time passed');
 	}
-
 }

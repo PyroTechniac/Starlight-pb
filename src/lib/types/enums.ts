@@ -2,7 +2,8 @@ export const enum StarlightEvents {
 	TaskFound = 'taskFound',
 	TaskCreated = 'taskCreated',
 	Log = 'log',
-	Warn = 'warn'
+	Warn = 'warn',
+	TaskError = 'taskError'
 }
 
 export const enum Time {

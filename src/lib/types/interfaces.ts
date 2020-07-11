@@ -1,10 +1,10 @@
-import type { Message, Client } from '@klasa/core';
-import type { Command, Possible, TimeResolvable } from 'klasa';
+import type { Client, Message } from '@klasa/core';
+import type { IdKeyed, RequestHandler } from '@klasa/request-handler';
 import type { ClientManager } from '@lib/structures/ClientManager';
-import type { Inhibitor, Fallback } from '@utils/decorators';
 import type { FetchTypes } from '@lib/types/types';
+import type { Fallback, Inhibitor } from '@utils/decorators';
+import type { Command, Possible } from 'klasa';
 import type { RequestInit } from 'node-fetch';
-import type { RequestHandler, IdKeyed } from '@klasa/request-handler';
 
 export interface Resolvable<V> {
 	resolve(): V | Promise<V>;
@@ -54,8 +54,6 @@ export interface BaseRepository<K, V extends IdKeyed<K>, Rs> {
 }
 
 export interface TaskEntityCreateOptions {
-	name: string;
-	time: TimeResolvable;
-	data?: Record<PropertyKey, any>;
 	catchUp?: boolean;
+	data?: Record<string, unknown>;
 }

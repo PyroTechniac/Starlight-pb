@@ -1,4 +1,4 @@
-import { TaskEntity } from '@orm/entities/TaskEntity';
+import { TaskEntity } from '@lib/orm/entities/TaskEntity';
 import { ClientRepository } from '@orm/repositories/ClientRepository';
 import { CommandCounterRepository } from '@orm/repositories/CommandCounterRepository';
 import { GuildRepository } from '@orm/repositories/GuildRepository';
@@ -14,7 +14,8 @@ import {
 	getConnection,
 	ObjectLiteral,
 	Repository, Transaction,
-	TransactionManager
+	TransactionManager,
+	QueryRunner
 } from 'typeorm';
 
 export class DbManager {
@@ -46,7 +47,7 @@ export class DbManager {
 	}
 
 	public get tasks(): Repository<TaskEntity> {
-		return this.#connection.getRepository(TaskEntity);
+		return this.#connection.getRepository(TaskEntity)
 	}
 
 	public transaction<T>(transactionFn: (manager: EntityManager) => Promise<T>): Promise<T> {
@@ -61,6 +62,10 @@ export class DbManager {
 
 	public async destroy(): Promise<void> {
 		await this.#connection.close();
+	}
+
+	public startQueryRunner(): QueryRunner {
+		return this.#connection.createQueryRunner()
 	}
 
 	public static config: ConnectionOptions = {
