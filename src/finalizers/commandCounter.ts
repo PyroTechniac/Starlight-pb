@@ -10,10 +10,7 @@ export default class extends Finalizer {
 		await this.ensureSettings(message, command, connection);
 		const { commandCounters, users, clients } = connection;
 		await commandCounters.increment({ id: command.name }, 'uses', 1);
-		const userSettings = await users.acquire(message);
-		await userSettings.update((data): void => {
-			data.commandUses++;
-		});
+		await users.increment({ id: message.author.id }, 'commandUses', 1);
 		await clients.increment({ id: this.client.user!.id }, 'commandUses', 1);
 		await this.handleGuildMessage(message, connection);
 	}

@@ -1,27 +1,12 @@
-import { Repository, EntityRepository } from 'typeorm';
 import { CommandCounterEntity } from '@orm/entities/CommandCounterEntity';
-import type { BaseRepository } from '@lib/types/interfaces';
+import { BaseRepository } from '@orm/repositories/base/BaseRepository';
 import type { Command } from 'klasa';
-import { RequestHandler } from '@klasa/request-handler';
+import { EntityRepository } from 'typeorm';
 
 export type CommandEntityResolvable = string | Command;
 
 @EntityRepository(CommandCounterEntity)
-export class CommandCounterRepository extends Repository<CommandCounterEntity> implements BaseRepository<string, CommandCounterEntity, CommandEntityResolvable> {
-
-	public createHandler = new RequestHandler(
-		this.createOne.bind(this),
-		this.createMany.bind(this)
-	);
-
-	public async acquire(resolvable: CommandEntityResolvable): Promise<CommandCounterEntity> {
-		const id = this.resolveToID(resolvable);
-		try {
-			return await this.findOneOrFail({ id });
-		} catch {
-			return this.createHandler.push(id);
-		}
-	}
+export class CommandCounterRepository extends BaseRepository<CommandCounterEntity, CommandEntityResolvable> {
 
 	public createOne(id: string): Promise<CommandCounterEntity> {
 		const entity = new CommandCounterEntity();

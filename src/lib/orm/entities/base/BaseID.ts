@@ -1,18 +1,12 @@
 import type { IdKeyed } from '@klasa/request-handler';
-import { UpdateManager } from '@orm/utilities/UpdateManager';
 import { BaseEntity } from 'typeorm';
 import type { Constructor } from '@klasa/core';
 
-export abstract class BaseID extends BaseEntity implements IdKeyed<string> {
+export type PrimitiveTypes = string | boolean | number | bigint;
 
-	public abstract id: string;
+export abstract class BaseID<K extends PrimitiveTypes = string> extends BaseEntity implements IdKeyed<K> {
 
-	public update(cb: (entity: this) => void): Promise<this> {
-		const manager = UpdateManager.acquire(this);
-		return manager.add(cb)
-			.then((): Promise<void> => this.reload())
-			.then((): this => this);
-	}
+	public abstract id: K;
 
 	public clone(): this {
 		const Ctor = this.constructor as Constructor<this>;
@@ -20,10 +14,4 @@ export abstract class BaseID extends BaseEntity implements IdKeyed<string> {
 		Object.assign(clone, this);
 		return clone;
 	}
-
-	public sync(): Promise<this> {
-		return this.reload()
-			.then((): this => this);
-	}
-
 }

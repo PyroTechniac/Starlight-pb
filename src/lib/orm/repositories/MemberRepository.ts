@@ -7,7 +7,7 @@ import { RequestHandler } from '@klasa/request-handler';
 @EntityRepository(MemberEntity)
 export class MemberRepository extends Repository<MemberEntity> {
 
-	public createHandler= new RequestHandler(
+	public createHandler = new RequestHandler(
 		this.createOne.bind(this),
 		this.createMany.bind(this)
 	);

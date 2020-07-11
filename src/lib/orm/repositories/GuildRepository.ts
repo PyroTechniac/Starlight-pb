@@ -1,28 +1,13 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Guild, GuildMember, Message, Role } from '@klasa/core';
 import { GuildEntity } from '@orm/entities/GuildEntity';
-import type { BaseRepository } from '@lib/types/interfaces';
-import { Guild, Role, GuildMember, Message } from '@klasa/core';
+import { BaseRepository } from '@orm/repositories/base/BaseRepository';
 import { toss } from '@utils/util';
-import { RequestHandler } from '@klasa/request-handler';
+import { EntityRepository } from 'typeorm';
 
 export type GuildEntityResolvable = Guild | Role | GuildMember | Message | string;
 
 @EntityRepository(GuildEntity)
-export class GuildRepository extends Repository<GuildEntity> implements BaseRepository<string, GuildEntity, GuildEntityResolvable> {
-
-	public createHandler = new RequestHandler(
-		this.createOne.bind(this),
-		this.createMany.bind(this)
-	);
-
-	public async acquire(resolvable: GuildEntityResolvable): Promise<GuildEntity> {
-		const id = this.resolveToID(resolvable);
-		try {
-			return await this.findOneOrFail({ id });
-		} catch {
-			return this.createHandler.push(id);
-		}
-	}
+export class GuildRepository extends BaseRepository<GuildEntity, GuildEntityResolvable> {
 
 	public createOne(id: string): Promise<GuildEntity> {
 		const entity = new GuildEntity();

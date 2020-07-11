@@ -1,28 +1,13 @@
 import { Client, Piece, Structure } from '@klasa/core';
-import { Repository, EntityRepository } from 'typeorm';
 import { ClientEntity } from '@orm/entities/ClientEntity';
-import type { BaseRepository } from '@lib/types/interfaces';
+import { BaseRepository } from '@orm/repositories/base/BaseRepository';
 import { toss } from '@utils/util';
-import { RequestHandler } from '@klasa/request-handler';
+import { EntityRepository } from 'typeorm';
 
 export type ClientEntityResolvable = string | Client | Structure<Client> | Piece;
 
 @EntityRepository(ClientEntity)
-export class ClientRepository extends Repository<ClientEntity> implements BaseRepository<string, ClientEntity, ClientEntityResolvable> {
-
-	public createHandler = new RequestHandler(
-		this.createOne.bind(this),
-		this.createMany.bind(this)
-	);
-
-	public async acquire(resolvable: ClientEntityResolvable): Promise<ClientEntity> {
-		const id = this.resolveToID(resolvable);
-		try {
-			return await this.findOneOrFail({ id });
-		} catch {
-			return this.createHandler.push(id);
-		}
-	}
+export class ClientRepository extends BaseRepository<ClientEntity, ClientEntityResolvable> {
 
 	public createOne(id: string): Promise<ClientEntity> {
 		const entity = new ClientEntity();

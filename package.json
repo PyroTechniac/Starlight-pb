@@ -25,7 +25,8 @@
 		"discord"
 	],
 	"dependencies": {
-		"@klasa/core": "dirigeants/core#ff452f43a236004ef21868c0d925c8dd639ebfad",
+		"@klasa/async-queue": "^0.0.1",
+		"@klasa/core": "dirigeants/core#101b131f06411fe16e9080448eddac98821a3f1e",
 		"@klasa/request-handler": "^0.0.3",
 		"abort-controller": "^3.0.0",
 		"class-validator": "^0.12.2",
