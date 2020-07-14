@@ -5,6 +5,8 @@ import { BaseID } from '@orm/entities/base/BaseID';
 import { isNullish } from '@utils/util';
 import type { KlasaClient, Task } from 'klasa';
 import { Column, Entity, PrimaryGeneratedColumn, ValueTransformer } from 'typeorm';
+import { container } from 'tsyringe';
+import { StarlightClient } from '@client/StarlightClient';
 
 export const enum ResponseType {
 	Ignore,
@@ -14,8 +16,8 @@ export const enum ResponseType {
 }
 
 export type PartialResponseValue = { type: ResponseType.Ignore | ResponseType.Finished }
-| { type: ResponseType.Delay; value: number }
-| { type: ResponseType.Update; value: Date };
+	| { type: ResponseType.Delay; value: number }
+	| { type: ResponseType.Update; value: Date };
 
 export type ResponseValue = PartialResponseValue & { entry: TaskEntity };
 
@@ -45,19 +47,20 @@ export class TaskEntity extends BaseID<number> {
 
 	#paused = true;
 
-	#client: KlasaClient = null!;
+	#client: KlasaClient;
 
-	#manager: TaskManager = null!;
+	#manager: TaskManager;
 	/* eslint-enable @typescript-eslint/explicit-member-accessibility */
+
+	public constructor() {
+		super();
+		const client = container.resolve(StarlightClient);
+		this.#client = client;
+		this.#manager = client.manager.tasks;
+	}
 
 	public get task(): Task | null {
 		return this.#client.tasks.get(this.taskID) ?? null;
-	}
-
-	public setup(manager: TaskManager): this {
-		this.#client = manager.client;
-		this.#manager = manager;
-		return this;
 	}
 
 	public async run(): Promise<ResponseValue> {
@@ -93,10 +96,6 @@ export class TaskEntity extends BaseID<number> {
 
 	public delete(): Promise<boolean> {
 		return this.#manager.remove(this);
-	}
-
-	public clone(): this {
-		return super.clone().setup(this.#manager);
 	}
 
 	private static cronTransformer: ValueTransformer = {

@@ -19,7 +19,6 @@ export default class extends Finalizer {
 	@requiresGuildContext()
 	private async handleGuildMessage(message: Message, manager: DbManager): Promise<void> {
 		if (isNullish(message.guild)) return;
-		if (isNullish(message.member)) await message.guild.members.fetch(message.author.id);
 		const { guilds } = manager;
 		await guilds.acquire(message);
 		await guilds.increment({ id: message.guild.id }, 'commandUses', 1);

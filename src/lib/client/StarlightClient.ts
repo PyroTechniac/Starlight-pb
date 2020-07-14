@@ -7,7 +7,9 @@ import { STARLIGHT_OPTIONS } from '@utils/constants';
 import { KlasaClient, KlasaClientOptions } from 'klasa';
 import type { WorkerManager } from '@lib/workers/WorkerManager';
 import { UserGateway } from '@lib/structures/settings/UserGateway';
+import { singleton} from 'tsyringe';
 
+@singleton()
 export class StarlightClient extends KlasaClient {
 
 	public readonly manager: ClientManager = new ClientManager(this);

@@ -24,7 +24,7 @@ export class TaskManager implements ClientEngine, Iterable<TaskEntity> {
 		const { tasks } = await DbManager.connect();
 		const found = await tasks.find();
 
-		for (const entry of found) this._insert(entry.setup(this).resume());
+		for (const entry of found) this._insert(entry.resume());
 		this._checkInterval();
 	}
 
@@ -40,7 +40,7 @@ export class TaskManager implements ClientEngine, Iterable<TaskEntity> {
 		entry.data = options.data ?? {};
 		await entry.save();
 
-		this._insert(entry.setup(this).resume());
+		this._insert(entry.resume());
 		this._checkInterval();
 		return entry;
 	}
