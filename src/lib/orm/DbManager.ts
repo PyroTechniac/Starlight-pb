@@ -2,9 +2,7 @@ import { TaskEntity } from '@lib/orm/entities/TaskEntity';
 import { ClientRepository } from '@orm/repositories/ClientRepository';
 import { CommandCounterRepository } from '@orm/repositories/CommandCounterRepository';
 import { GuildRepository } from '@orm/repositories/GuildRepository';
-import { MemberRepository } from '@orm/repositories/MemberRepository';
 import { UserRepository } from '@orm/repositories/UserRepository';
-import { rootFolder } from '@utils/constants';
 import { join } from 'path';
 import {
 	Connection,
@@ -13,10 +11,12 @@ import {
 	EntityManager,
 	getConnection,
 	ObjectLiteral,
-	Repository, Transaction,
-	TransactionManager,
-	QueryRunner
+	QueryRunner,
+	Repository,
+	Transaction,
+	TransactionManager
 } from 'typeorm';
+import { ensureOrThrow } from '@utils/util';
 
 export class DbManager {
 
@@ -38,16 +38,12 @@ export class DbManager {
 		return this.#connection.getCustomRepository(ClientRepository);
 	}
 
-	public get members(): MemberRepository {
-		return this.#connection.getCustomRepository(MemberRepository);
-	}
-
 	public get guilds(): GuildRepository {
 		return this.#connection.getCustomRepository(GuildRepository);
 	}
 
 	public get tasks(): Repository<TaskEntity> {
-		return this.#connection.getRepository(TaskEntity)
+		return this.#connection.getRepository(TaskEntity);
 	}
 
 	public transaction<T>(transactionFn: (manager: EntityManager) => Promise<T>): Promise<T> {
@@ -65,12 +61,15 @@ export class DbManager {
 	}
 
 	public startQueryRunner(): QueryRunner {
-		return this.#connection.createQueryRunner()
+		return this.#connection.createQueryRunner();
 	}
 
 	public static config: ConnectionOptions = {
-		type: 'sqlite',
-		database: process.env.TYPEORM_DATABASE ?? join(rootFolder, 'bwd', 'connection', 'sqlite', 'db.sqlite'),
+		type: 'postgres',
+		host: ensureOrThrow(process.env.POSTGRES_HOST, new Error('PG host not found')),
+		username: ensureOrThrow(process.env.POSTGRES_USERNAME, new Error('PG user not found')),
+		password: ensureOrThrow(process.env.POSTGRES_PASSWORD, new Error('PG password not found')),
+		database: ensureOrThrow(process.env.POSTGRES_DATABASE, new Error('PG database not found')),
 		entities: [
 			join(__dirname, 'entities/*.js')
 		],
@@ -97,3 +96,5 @@ export class DbManager {
 	}
 
 }
+
+export default DbManager.config;

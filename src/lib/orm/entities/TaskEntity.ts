@@ -1,10 +1,10 @@
-import { BaseID } from '@orm/entities/base/BaseID';
-import { PrimaryGeneratedColumn, Entity, Column, ValueTransformer } from 'typeorm';
 import { Cron } from '@klasa/cron';
-import { isNullish } from '@utils/util';
 import type { TaskManager } from '@lib/structures/TaskManager';
-import type { KlasaClient, Task } from 'klasa';
 import { StarlightEvents } from '@lib/types/enums';
+import { BaseID } from '@orm/entities/base/BaseID';
+import { isNullish } from '@utils/util';
+import type { KlasaClient, Task } from 'klasa';
+import { Column, Entity, PrimaryGeneratedColumn, ValueTransformer } from 'typeorm';
 
 export const enum ResponseType {
 	Ignore,
@@ -14,30 +14,31 @@ export const enum ResponseType {
 }
 
 export type PartialResponseValue = { type: ResponseType.Ignore | ResponseType.Finished }
-	| { type: ResponseType.Delay; value: number }
-	| { type: ResponseType.Update; value: Date }
+| { type: ResponseType.Delay; value: number }
+| { type: ResponseType.Update; value: Date };
 
-export type ResponseValue = PartialResponseValue & { entry: TaskEntity }
+export type ResponseValue = PartialResponseValue & { entry: TaskEntity };
 
 @Entity({ schema: 'public' })
 export class TaskEntity extends BaseID<number> {
-	@PrimaryGeneratedColumn({ type: 'int' })
+
+	@PrimaryGeneratedColumn({ type: 'integer' })
 	public id!: number;
 
 	@Column('varchar')
 	public taskID!: string;
 
-	@Column('int')
-	public time!:number;
+	@Column('timestamp without time zone')
+	public time!: Date;
 
 	@Column('varchar', { nullable: true, transformer: TaskEntity.cronTransformer })
 	public recurring: Cron | null = null;
 
 	@Column('boolean')
-	public catchUp: boolean = true;
+	public catchUp = true;
 
-	@Column('simple-json')
-	public data!: Record<string, unknown>
+	@Column('jsonb')
+	public data!: Record<string, unknown>;
 
 	/* eslint-disable @typescript-eslint/explicit-member-accessibility */
 	#running = false;
@@ -45,19 +46,12 @@ export class TaskEntity extends BaseID<number> {
 	#paused = true;
 
 	#client: KlasaClient = null!;
+
 	#manager: TaskManager = null!;
 	/* eslint-enable @typescript-eslint/explicit-member-accessibility */
 
 	public get task(): Task | null {
 		return this.#client.tasks.get(this.taskID) ?? null;
-	}
-
-	public get runTime(): Date {
-		return new Date(this.time);
-	}
-
-	public set runTime(value: Date) {
-		this.time = value.getTime();
 	}
 
 	public setup(manager: TaskManager): this {
@@ -84,7 +78,7 @@ export class TaskEntity extends BaseID<number> {
 
 		return isNullish(this.recurring)
 			? { entry: this, type: ResponseType.Finished }
-			: { entry: this, type: ResponseType.Update, value: this.recurring.next() }
+			: { entry: this, type: ResponseType.Update, value: this.recurring.next() };
 	}
 
 	public resume(): this {
@@ -97,7 +91,7 @@ export class TaskEntity extends BaseID<number> {
 		return this;
 	}
 
-	public delete() {
+	public delete(): Promise<boolean> {
 		return this.#manager.remove(this);
 	}
 
@@ -106,7 +100,8 @@ export class TaskEntity extends BaseID<number> {
 	}
 
 	private static cronTransformer: ValueTransformer = {
-		from(value: string | null): Cron | null { return isNullish(value) ? null : new Cron(value) },
-		to(value: Cron | null): string | null { return isNullish(value) ? null : value.cron }
-	}
+		from(value: string | null): Cron | null { return isNullish(value) ? null : new Cron(value); },
+		to(value: Cron | null): string | null { return isNullish(value) ? null : value.cron; }
+	};
+
 }

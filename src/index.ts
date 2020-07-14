@@ -1,8 +1,7 @@
-import { config } from 'dotenv';
-import 'module-alias/register';
-import 'reflect-metadata';
 import { StarlightClient } from '@client/StarlightClient';
 import '@lib/extensions/StarlightUser';
+import { config } from 'dotenv';
+import 'reflect-metadata';
 
 config();
 

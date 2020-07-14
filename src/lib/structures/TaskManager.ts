@@ -1,14 +1,15 @@
-import type { ClientEngine, TaskEntityCreateOptions } from "@lib/types/interfaces";
-import type { ClientManager } from "@lib/structures//ClientManager";
-import type { KlasaClient, TimeResolvable } from "klasa";
-import { TaskEntity, ResponseValue, ResponseType } from "@lib/orm/entities/TaskEntity";
-import { DbManager } from "@orm/DbManager";
+import type { ClientEngine, TaskEntityCreateOptions } from '@lib/types/interfaces';
+import type { ClientManager } from '@lib/structures//ClientManager';
+import type { KlasaClient, TimeResolvable } from 'klasa';
+import { TaskEntity, ResponseValue, ResponseType } from '@lib/orm/entities/TaskEntity';
+import { DbManager } from '@orm/DbManager';
 import { Cron } from '@klasa/cron';
-import { isNullish } from "@utils/util";
+import { isNullish } from '@utils/util';
 import { TimerManager } from '@klasa/timer-manager';
-import { ClientEvents } from "@klasa/core";
+import { ClientEvents } from '@klasa/core';
 
 export class TaskManager implements ClientEngine, Iterable<TaskEntity> {
+
 	public queue: TaskEntity[] = [];
 
 	#interval: NodeJS.Timer | null = null; // eslint-disable-line @typescript-eslint/explicit-member-accessibility
@@ -16,14 +17,14 @@ export class TaskManager implements ClientEngine, Iterable<TaskEntity> {
 	public constructor(public readonly manager: ClientManager) { }
 
 	public get client(): KlasaClient {
-		return this.client;
+		return this.manager.client;
 	}
 
-	public async init() {
+	public async init(): Promise<void> {
 		const { tasks } = await DbManager.connect();
 		const found = await tasks.find();
 
-		for (const entry of found) this._insert(entry);
+		for (const entry of found) this._insert(entry.setup(this).resume());
 		this._checkInterval();
 	}
 
@@ -33,7 +34,7 @@ export class TaskManager implements ClientEngine, Iterable<TaskEntity> {
 		const [time, cron] = this._resolveTime(timeResolvable);
 		const entry = new TaskEntity();
 		entry.taskID = taskID;
-		entry.runTime = time;
+		entry.time = time;
 		entry.recurring = cron;
 		entry.catchUp = options.catchUp ?? true;
 		entry.data = options.data ?? {};
@@ -62,8 +63,8 @@ export class TaskManager implements ClientEngine, Iterable<TaskEntity> {
 			const now = Date.now();
 			const execute = [];
 
-			for (const entry of this){
-				if (entry.runTime.getTime() > now) break;
+			for (const entry of this) {
+				if (entry.time.getTime() > now) break;
 				execute.push(entry.run());
 			}
 
@@ -75,7 +76,7 @@ export class TaskManager implements ClientEngine, Iterable<TaskEntity> {
 	}
 
 	public *[Symbol.iterator](): IterableIterator<TaskEntity> {
-		yield* this.queue;
+		yield *this.queue;
 	}
 
 	private _insert(entity: TaskEntity): void {
@@ -89,7 +90,7 @@ export class TaskManager implements ClientEngine, Iterable<TaskEntity> {
 		if (index !== -1) this.queue.splice(index, 1);
 	}
 
-	private async _handleResponses(responses: readonly ResponseValue[]) {
+	private async _handleResponses(responses: readonly ResponseValue[]): Promise<void> {
 		const connection = await DbManager.connect();
 		const queryRunner = connection.startQueryRunner();
 		await queryRunner.connect();
@@ -103,7 +104,8 @@ export class TaskManager implements ClientEngine, Iterable<TaskEntity> {
 
 				switch (response.type) {
 					case ResponseType.Delay: {
-						response.entry.runTime = new Date(response.entry.runTime.getTime() + response.value);
+						// eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+						response.entry.time = new Date(response.entry.time.getTime() + response.value);
 						updated.push(response.entry);
 						await queryRunner.manager.save(response.entry);
 					}
@@ -115,7 +117,7 @@ export class TaskManager implements ClientEngine, Iterable<TaskEntity> {
 						continue;
 					}
 					case ResponseType.Update: {
-						response.entry.runTime = response.value;
+						response.entry.time = response.value;
 						updated.push(response.entry);
 						await queryRunner.manager.save(response.entry);
 					}
@@ -157,7 +159,7 @@ export class TaskManager implements ClientEngine, Iterable<TaskEntity> {
 
 	private _checkInterval(): void {
 		if (!this.queue.length) this._clearInterval();
-		else if (isNullish(this.#interval)) this.#interval = TimerManager.setInterval(this.execute.bind(this), this.client.options.schedule.interval)
+		else if (isNullish(this.#interval)) this.#interval = TimerManager.setInterval(this.execute.bind(this), this.client.options.schedule.interval);
 	}
 
 	private _resolveTime(time: TimeResolvable): [Date, Cron | null] {
@@ -170,4 +172,5 @@ export class TaskManager implements ClientEngine, Iterable<TaskEntity> {
 		}
 		throw new TypeError('Invalid time passed');
 	}
+
 }

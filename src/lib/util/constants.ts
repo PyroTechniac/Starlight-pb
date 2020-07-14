@@ -46,5 +46,12 @@ export const STARLIGHT_OPTIONS: KlasaClientOptions = {
 	providers: {
 		'default': defaultProvider ?? 'json',
 		'json': { baseDirectory: baseDirectory('json') }
+	},
+	pieces: {
+		defaults: {
+			commands: {
+				deletable: true
+			}
+		}
 	}
 };

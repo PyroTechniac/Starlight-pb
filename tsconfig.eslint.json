@@ -3,6 +3,7 @@
 	"include": [
 		"src",
 		"jest.config.js",
-		"test"
+		"test",
+		"ormconfig.js"
 	]
 }

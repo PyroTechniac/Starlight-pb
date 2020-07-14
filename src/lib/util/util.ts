@@ -13,3 +13,7 @@ export function filterArray<V>(array: V[]): V[] {
 export function isNullish(value: unknown): value is (null | undefined) {
 	return value === null || value === undefined;
 }
+
+export function ensureOrThrow<V>(value: V, err: unknown): V {
+	return value ?? toss(err);
+}

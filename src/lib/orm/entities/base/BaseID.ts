@@ -2,7 +2,7 @@ import type { IdKeyed } from '@klasa/request-handler';
 import { BaseEntity } from 'typeorm';
 import type { Constructor } from '@klasa/core';
 
-export type PrimitiveTypes = string | boolean | number | bigint;
+export type PrimitiveTypes = string | number | bigint;
 
 export abstract class BaseID<K extends PrimitiveTypes = string> extends BaseEntity implements IdKeyed<K> {
 
@@ -14,4 +14,5 @@ export abstract class BaseID<K extends PrimitiveTypes = string> extends BaseEnti
 		Object.assign(clone, this);
 		return clone;
 	}
+
 }

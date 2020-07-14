@@ -1,1 +1,2 @@
-module.exports = require('./dist/lib/orm/DbManager').DbManager.config;
+require('dotenv').config();
+module.exports = require('./dist/lib/orm/DbManager').default;

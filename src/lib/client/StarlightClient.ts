@@ -26,7 +26,7 @@ export class StarlightClient extends KlasaClient {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-expect-error
 		super(mergeDefault(STARLIGHT_OPTIONS, options));
-		this.gateways.register(new UserGateway(this, 'users'));
+		this.gateways.register(new UserGateway(this));
 		this.loadPlugins();
 	}
 

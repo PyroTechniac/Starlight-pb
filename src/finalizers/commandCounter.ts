@@ -2,6 +2,7 @@ import { Message } from '@klasa/core';
 import { DbManager } from '@orm/DbManager';
 import { requiresGuildContext } from '@utils/decorators';
 import { Command, Finalizer } from 'klasa';
+import { isNullish } from '@utils/util';
 
 export default class extends Finalizer {
 
@@ -17,11 +18,11 @@ export default class extends Finalizer {
 
 	@requiresGuildContext()
 	private async handleGuildMessage(message: Message, manager: DbManager): Promise<void> {
-		const { guilds, members } = manager;
-		await members.acquire(message);
+		if (isNullish(message.guild)) return;
+		if (isNullish(message.member)) await message.guild.members.fetch(message.author.id);
+		const { guilds } = manager;
 		await guilds.acquire(message);
-		await guilds.increment({ id: message.guild!.id }, 'commandUses', 1);
-		await members.increment({ guildID: message.guild!.id, userID: message.author.id }, 'commandUses', 1);
+		await guilds.increment({ id: message.guild.id }, 'commandUses', 1);
 	}
 
 	private async ensureSettings(message: Message, command: Command, { users, clients, commandCounters }: DbManager): Promise<void> {
